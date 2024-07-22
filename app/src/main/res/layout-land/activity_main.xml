@@ -18,19 +18,69 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
+            android:layout_alignParentTop="true"
             android:elevation="4dp"
             android:theme="@style/Theme.NoteBook"
             app:navigationIcon="@drawable/ic_action_dehaze"
             app:popupTheme="@style/Theme.NoteBook"
             app:titleTextColor="@color/white" />
 
-<!--        List note fragment-->
-        Linear
         <LinearLayout
-            android:id="@+id/note_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_below="@+id/main_toolbar"
+            android:layout_alignParentStart="true"
+            android:orientation="horizontal">
+
+            <!--        List note fragment-->
+            <LinearLayout
+                android:id="@+id/note_list_fragment"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:context=".ListNoteFragment"
+                    tools:ignore="ExtraText">
+
+                    <TextView
+                        android:id="@+id/textNoteEmpty"
+                        style="@style/infoTextView"
+                        android:text="@string/main_screen_empty_note"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="@dimen/empty_icon_width"
+                        android:layout_height="@dimen/empty_icon_height"
+                        android:layout_margin="8dp"
+                        android:scaleType="center"
+                        app:srcCompat="@drawable/empty_note"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.498"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textNoteEmpty" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+            <!--        Note detail fragment-->
+            <LinearLayout
+                android:id="@+id/note_detail_fragment"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:orientation="vertical">
+
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
@@ -51,14 +101,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/navigation_header_height"
-                android:gravity="bottom"
                 android:background="@color/colorPrimary"
-                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:gravity="bottom"
+                android:orientation="vertical"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
 
-                android:orientation="vertical">
+                android:paddingBottom="@dimen/activity_vertical_margin">
+
                 <ImageView
                     android:id="@+id/activity_main_imv_avatar"
                     android:layout_width="wrap_content"
@@ -71,33 +122,34 @@
                     android:id="@+id/textView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/activity_vertical_margin"
                     android:text="VK"
-                    android:textColor="@color/white"
-                    android:paddingTop="@dimen/activity_vertical_margin"/>
+                    android:textColor="@color/white" />
+
                 <TextView
                     android:id="@+id/activity_main_tv_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:text="vk.it@gmail.com" />
+                    android:text="vk.it@gmail.com"
+                    android:textColor="@color/white" />
             </LinearLayout>
 
             <!--            Item info-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/navigation_item_height"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
+                android:layout_marginTop="3dp"
                 android:background="@color/white"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="3dp">
+                android:paddingRight="@dimen/activity_horizontal_margin">
 
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/navigation_item_icon_size"
-                    app:srcCompat="@drawable/ic_action_info"
-                    ></ImageView>
+                    android:layout_height="24dp"
+                    app:srcCompat="@drawable/ic_action_info"></ImageView>
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -110,18 +162,18 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/navigation_item_height"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
+                android:layout_marginTop="3dp"
                 android:background="@color/white"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="3dp">
+                android:paddingRight="@dimen/activity_horizontal_margin">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/navigation_item_icon_size"
-                    app:srcCompat="@drawable/ic_action_help"
-                    ></ImageView>
+                    app:srcCompat="@drawable/ic_action_help"></ImageView>
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

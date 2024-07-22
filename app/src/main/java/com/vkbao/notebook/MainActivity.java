@@ -16,6 +16,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -41,6 +44,43 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.activity_main_drawer);
         actionBarToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(actionBarToggle);
+
+//        Display fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        //        Portrait mode
+        if (findViewById(R.id.note_fragment) != null) {
+            Log.d(TAG, "Portrait mode");
+            if (savedInstanceState != null) {
+                getSupportFragmentManager().executePendingTransactions();
+                Fragment note_fragment = fragmentManager.findFragmentById(R.id.note_fragment);
+                if (note_fragment != null) {
+                    fragmentManager.beginTransaction().remove(note_fragment).commit();
+                }
+            }
+            fragmentManager.beginTransaction().add(R.id.note_fragment, new ListNoteFragment()).commit();
+
+        } else {
+//            Landscape mode
+            Log.d(TAG, "Landscape mode");
+            if (savedInstanceState != null) {
+                getSupportFragmentManager().executePendingTransactions();
+
+                //remove note list fragment
+                Fragment noteListFragment = fragmentManager.findFragmentById(R.id.note_list_fragment);
+                if (noteListFragment != null) {
+                    fragmentManager.beginTransaction().remove(noteListFragment).commit();
+                }
+
+                //remove note detail fragment
+                Fragment noteDetailFragment = fragmentManager.findFragmentById(R.id.note_detail_fragment);
+                if (noteDetailFragment != null) {
+                    fragmentManager.beginTransaction().remove(noteDetailFragment).commit();
+                }
+            }
+            //add fragment to activity
+            fragmentManager.beginTransaction().add(R.id.note_list_fragment, new ListNoteFragment()).commit();
+        }
+
     }
 
     @Override
@@ -62,10 +102,16 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (itemId == R.id.about) {
             Intent intent = new Intent(this, ContactActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(ContactActivity.SHOW_WHAT.KEY_SHOW_WHAT, ContactActivity.SHOW_WHAT.VALUE_SHOW_ABOUT);
+            intent.putExtras(bundle);
             startActivity(intent);
             return true;
         } else if (itemId == R.id.help) {
             Intent intent = new Intent(this, ContactActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(ContactActivity.SHOW_WHAT.KEY_SHOW_WHAT, ContactActivity.SHOW_WHAT.VALUE_SHOW_HELP);
+            intent.putExtras(bundle);
             startActivity(intent);
             return true;
         }
