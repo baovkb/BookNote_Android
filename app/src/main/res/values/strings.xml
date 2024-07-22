@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Note Book</string>
+
+    <!--    Action-->
+    <string name="common_action_close">Close</string>
+    <string name="common_action_save">Save</string>
+
+    <!--   Menu-->
+    <string name="menu_item_search">Search</string>
+    <string name="menu_item_about_app">About app</string>
+    <string name="menu_item_help">Help</string>
+    <string name="menu_item_app_version">Version %s</string>
+
+    <!--    Main screen-->
+    <string name="main_screen_empty_note">Note is empty!</string>
+    <string name="main_screen_add_category">Add category</string>
+    <string name="main_screen_add_note">Add note</string>
+    <string name="main_screen_edit_note">Edit note</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+
+    <!--    Note detail-->
+    <string name="note_detail_share">Share</string>
+    <string name="note_detail_delete">Delete</string>
+    <string name="note_detail_category">Category</string>
+    <string name="note_detail_more_detail">Detail</string>
+    <string name="note_detail_other_information">Ọther information</string>
+    <string name="note_detail_map_location">Map location</string>
+    <string name="note_detail_name_hint">Name</string>
+    <string name="note_detail_detail_hint">Description</string>
+    <string name="note_detail_note_hint">Note - can add it later</string>
+    <string name="note_detail_address_hint">Addresss</string>
+</resources>

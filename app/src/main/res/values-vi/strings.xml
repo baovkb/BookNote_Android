@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Note Book</string>
+
+<!--    Hành động-->
+    <string name="common_action_close">Đóng</string>
+    <string name="common_action_save">Lưu</string>
+
+<!--   Các Menu-->
+    <string name="menu_item_search">Tìm kiếm</string>
+    <string name="menu_item_about_app">Về ứng dụng</string>
+    <string name="menu_item_help">Giúp đỡ</string>
+    <string name="menu_item_app_version">Phiên bản %s</string>
+
+<!--    Màn hình chính-->
+    <string name="main_screen_empty_note">Chưa có ghi chú nào!</string>
+    <string name="main_screen_add_category">Thêm chủ đề</string>
+    <string name="main_screen_add_note">Thêm địa điểm</string>
+    <string name="main_screen_edit_note">Sửa địa điểm</string>
+
+<!--    Màn hình note detail-->
+    <string name="note_detail_share">Chia sẻ</string>
+    <string name="note_detail_delete">Xóa</string>
+    <string name="note_detail_category">Chủ đề</string>
+    <string name="note_detail_more_detail">Chi tiết về địa điểm</string>
+    <string name="note_detail_other_information">Thông tin khác</string>
+    <string name="note_detail_map_location">Vị trí bản đồ</string>
+    <string name="note_detail_name_hint">Tên địa điểm</string>
+    <string name="note_detail_detail_hint">Mô tả về địa điểm</string>
+    <string name="note_detail_note_hint">Ghi chú - Có thể thêm vào sau</string>
+    <string name="note_detail_address_hint">Địa chỉ</string>
+
+</resources>
