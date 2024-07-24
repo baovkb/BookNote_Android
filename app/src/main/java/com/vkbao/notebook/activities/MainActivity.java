@@ -1,29 +1,48 @@
-package com.vkbao.notebook;
+package com.vkbao.notebook.activities;
 
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
+import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
-public class MainActivity extends AppCompatActivity {
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.vkbao.notebook.fragments.ListNoteFragment;
+import com.vkbao.notebook.R;
+
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     private static final String TAG = "MainActivity";
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarToggle;
+    private NavigationView navigationView;
+    private FloatingActionButton mainBtn;
+    private FloatingActionButton addLabelBtn;
+    private FloatingActionButton addNoteBtn;
+    private TextView addLabelTextView;
+    private TextView addNoteTextView;
+    private View fabModal;
+
+    private boolean isHidden = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +63,26 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.activity_main_drawer);
         actionBarToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(actionBarToggle);
+
+        //Navigation drawer item click event
+        navigationView = findViewById(R.id.activity_main_nav);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        //Floating Action Button
+        mainBtn = findViewById(R.id.activity_main_add_btn);
+        addLabelBtn = findViewById(R.id.activity_main_add_label_btn);
+        addNoteBtn = findViewById(R.id.activity_main_add_note_btn);
+        fabModal = findViewById(R.id.activity_main_modal);
+
+        addLabelTextView = findViewById(R.id.activity_main_add_label_tv);
+        addNoteTextView = findViewById(R.id.activity_main_add_note_tv);
+
+        setStateFAB(View.GONE);
+
+        mainBtn.setOnClickListener(this);
+        addLabelBtn.setOnClickListener(this);
+        addNoteBtn.setOnClickListener(this);
+        fabModal.setOnClickListener(this);
 
 //        Display fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -83,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+//    Menu ActionBar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_actions, menu);
@@ -90,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+//  Handle click event on Menu ActionBar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
@@ -131,4 +172,62 @@ public class MainActivity extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
         actionBarToggle.onConfigurationChanged(newConfig);
     }
+
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        Intent intent = new Intent(this, ContactActivity.class);
+        Bundle bundle = new Bundle();
+
+        if (id == R.id.activity_main_drawer_item_info) {
+            bundle.putString(ContactActivity.SHOW_WHAT.KEY_SHOW_WHAT, ContactActivity.SHOW_WHAT.VALUE_SHOW_ABOUT);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        } else if (id == R.id.activity_main_drawer_item_help) {
+            bundle.putString(ContactActivity.SHOW_WHAT.KEY_SHOW_WHAT, ContactActivity.SHOW_WHAT.VALUE_SHOW_HELP);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        Log.d(TAG, "btn  is click: " + id);
+        if (id == mainBtn.getId() || id == fabModal.getId()){
+            if (isHidden) {
+                setStateFAB(View.VISIBLE);
+            } else {
+                setStateFAB(View.GONE);
+            }
+            isHidden = !isHidden;
+        } else if (id == addLabelBtn.getId()) {
+
+        } else if (id == addNoteBtn.getId()) {
+
+        }
+    }
+
+    public void setStateFAB(int visibility) {
+        if (visibility == View.GONE) {
+            mainBtn.setImageResource(R.drawable.ic_action_add);
+            addLabelBtn.setVisibility(View.GONE);
+            addNoteBtn.setVisibility(View.GONE);
+            addLabelTextView.setVisibility(View.GONE);
+            addNoteTextView.setVisibility(View.GONE);
+            fabModal.setVisibility(View.GONE);
+        } else if (visibility == View.VISIBLE) {
+            mainBtn.setImageResource(R.drawable.ic_action_close);
+            addLabelBtn.setVisibility(View.VISIBLE);
+            addNoteBtn.setVisibility(View.VISIBLE);
+            addLabelTextView.setVisibility(View.VISIBLE);
+            addNoteTextView.setVisibility(View.VISIBLE);
+            fabModal.setVisibility(View.VISIBLE);
+        }
+    }
+
 }

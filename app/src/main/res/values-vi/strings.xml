@@ -17,6 +17,10 @@
     <string name="main_screen_add_note">Thêm địa điểm</string>
     <string name="main_screen_edit_note">Sửa địa điểm</string>
 
+    <!--    Floating button-->
+    <string name="floating_button_add_label">Thêm nhãn</string>
+    <string name="floating_button_add_note">Thêm ghi chú</string>
+
 <!--    Màn hình note detail-->
     <string name="note_detail_share">Chia sẻ</string>
     <string name="note_detail_delete">Xóa</string>

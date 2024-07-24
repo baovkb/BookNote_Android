@@ -1,6 +1,5 @@
-package com.vkbao.notebook;
+package com.vkbao.notebook.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -12,6 +11,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
+import com.vkbao.notebook.R;
+import com.vkbao.notebook.fragments.AboutFragment;
+import com.vkbao.notebook.fragments.HelpFragment;
 
 public class ContactActivity extends AppCompatActivity {
     static final class SHOW_WHAT {
@@ -38,8 +43,13 @@ public class ContactActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            String keyShow = bundle.getString(SHOW_WHAT.KEY_SHOW_WHAT, "");
-            Toast.makeText(this, keyShow, Toast.LENGTH_SHORT).show();
+            String valueShow = bundle.getString(SHOW_WHAT.KEY_SHOW_WHAT, "");
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            if (valueShow.equals(SHOW_WHAT.VALUE_SHOW_ABOUT)) {
+                fragmentManager.beginTransaction().replace(R.id.contact_fragment, new AboutFragment()).commit();
+            } else if (valueShow.equals(SHOW_WHAT.VALUE_SHOW_HELP)) {
+                fragmentManager.beginTransaction().replace(R.id.contact_fragment, new HelpFragment()).commit();
+            }
         }
     }
 

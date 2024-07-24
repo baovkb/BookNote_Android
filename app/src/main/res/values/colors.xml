@@ -13,5 +13,5 @@
     <!--   a secondary color for controls like checkboxes and text fields. -->
     <color name="colorAccent">#DCA23D</color>
 
-
+    <color name="colorModal">#66FFFFFF</color>
 </resources>

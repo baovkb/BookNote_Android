@@ -7,128 +7,153 @@
     android:layout_height="match_parent"
     android:id="@+id/activity_main_drawer">
 
-    <LinearLayout
+<!--    Main layout-->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/main"
         android:orientation="vertical">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/main_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
-            android:elevation="4dp"
-            android:theme="@style/Theme.NoteBook"
-            app:navigationIcon="@drawable/ic_action_dehaze"
-            app:popupTheme="@style/Theme.NoteBook"
-            app:titleTextColor="@color/white" />
-
-<!--        List note fragment-->
-        Linear
         <LinearLayout
-            android:id="@+id/note_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:id="@+id/main"
             android:orientation="vertical">
-        </LinearLayout>
-    </LinearLayout>
 
+            <!--        List note fragment-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/main_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="@color/colorPrimary"
+                    android:elevation="4dp"
+                    android:theme="@style/Theme.NoteBook"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:navigationIcon="@drawable/ic_action_dehaze"
+                    app:popupTheme="@style/Theme.NoteBook"
+                    app:titleTextColor="@color/white" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/note_fragment"
+                    app:layout_constraintTop_toBottomOf="@+id/main_toolbar">
+
+                </FrameLayout>
+
+<!--                Modal floating button-->
+                <View
+                    android:id="@+id/activity_main_modal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:elevation="3dp"
+                    android:background="@color/colorModal"
+                    app:layout_constraintTop_toBottomOf="@+id/main_toolbar"></View>
+
+<!--                Floating button add note, add label-->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginEnd="16dp"
+                    android:elevation="4dp"
+                    android:layout_marginBottom="32dp">
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/activity_main_add_btn"
+                        style="@style/fab_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="1.0"
+                        app:layout_constraintVertical_chainStyle="packed"
+                        app:srcCompat="@drawable/ic_action_add" />
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/activity_main_add_label_btn"
+                        style="@style/fab_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:layout_marginBottom="16dp"
+                        app:fabCustomSize="45dp"
+                        app:layout_constraintBottom_toTopOf="@id/activity_main_add_btn"
+                        app:layout_constraintEnd_toEndOf="@id/activity_main_add_btn"
+                        app:layout_constraintStart_toStartOf="@id/activity_main_add_btn"
+                        app:srcCompat="@drawable/ic_action_label_outline" />
+
+                    <TextView
+                        android:id="@+id/activity_main_add_label_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/floating_button_add_label"
+                        style="@style/fab_text"
+                        app:layout_constraintTop_toTopOf="@+id/activity_main_add_label_btn"
+                        app:layout_constraintBottom_toBottomOf="@+id/activity_main_add_label_btn"
+                        app:layout_constraintEnd_toStartOf="@+id/activity_main_add_label_btn">
+
+                    </TextView>
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/activity_main_add_note_btn"
+                        style="@style/fab_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:layout_marginBottom="16dp"
+                        app:fabCustomSize="45dp"
+                        app:layout_constraintBottom_toTopOf="@id/activity_main_add_label_btn"
+                        app:layout_constraintEnd_toEndOf="@id/activity_main_add_btn"
+                        app:layout_constraintStart_toStartOf="@id/activity_main_add_btn"
+                        app:srcCompat="@drawable/ic_action_note_add" />
+                    <TextView
+                        android:id="@+id/activity_main_add_note_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/fab_text"
+                        android:text="@string/floating_button_add_note"
+                        app:layout_constraintTop_toTopOf="@+id/activity_main_add_note_btn"
+                        app:layout_constraintBottom_toBottomOf="@+id/activity_main_add_note_btn"
+                        app:layout_constraintEnd_toStartOf="@+id/activity_main_add_note_btn">
+
+                    </TextView>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+<!-- Navigation drawer   -->
     <com.google.android.material.navigation.NavigationView
+        android:id="@+id/activity_main_nav"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="57dp"
         android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/navigation_menu"
         android:fitsSystemWindows="true">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:orientation="vertical">
-            <!--            Headline-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/navigation_header_height"
-                android:gravity="bottom"
-                android:background="@color/colorPrimary"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
-
-                android:orientation="vertical">
-                <ImageView
-                    android:id="@+id/activity_main_imv_avatar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@mipmap/ic_launcher_round"
-
-                    ></ImageView>
-
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="VK"
-                    android:textColor="@color/white"
-                    android:paddingTop="@dimen/activity_vertical_margin"/>
-                <TextView
-                    android:id="@+id/activity_main_tv_email"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:text="vk.it@gmail.com" />
-            </LinearLayout>
-
-            <!--            Item info-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/navigation_item_height"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@color/white"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="3dp">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/navigation_item_icon_size"
-                    app:srcCompat="@drawable/ic_action_info"
-                    ></ImageView>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="32dp"
-                    android:text="@string/menu_item_about_app"></TextView>
-
-            </LinearLayout>
-
-            <!--            Item help-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/navigation_item_height"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@color/white"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="3dp">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/navigation_item_icon_size"
-                    app:srcCompat="@drawable/ic_action_help"
-                    ></ImageView>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="32dp"
-                    android:text="@string/menu_item_help"></TextView>
-
-            </LinearLayout>
-        </LinearLayout>
     </com.google.android.material.navigation.NavigationView>
+
+
 </androidx.drawerlayout.widget.DrawerLayout>
