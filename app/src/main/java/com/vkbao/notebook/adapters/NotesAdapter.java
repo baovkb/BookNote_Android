@@ -1,6 +1,5 @@
 package com.vkbao.notebook.adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.vkbao.notebook.R;
 import com.vkbao.notebook.models.Note;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder> {
@@ -28,7 +26,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
     @Override
     public void onBindViewHolder(@NonNull NotesViewHolder holder, int position) {
         holder.getNoteTitleTextView().setText(notes.get(position).getTitle());
-        holder.getNoteContentTextView().setText(notes.get(position).getContent());
 //        urlImage
     }
 

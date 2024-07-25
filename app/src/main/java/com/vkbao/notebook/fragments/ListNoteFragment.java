@@ -3,7 +3,6 @@ package com.vkbao.notebook.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,16 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.vkbao.notebook.R;
 import com.vkbao.notebook.adapters.NotesAdapter;
-import com.vkbao.notebook.models.Note;
 import com.vkbao.notebook.viewmodels.NotesViewModel;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ListNoteFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -64,15 +57,6 @@ public class ListNoteFragment extends Fragment {
                 notesAdapter.setNotes(notes);
             }
         });
-
-        for (int i = 0;i < 20; ++i) {
-            String title = "title " + i;
-            String content = "this is content " + i;
-            List<String> urlImage = new ArrayList<>();
-            urlImage.add("");
-            Note tmp = new Note(title, content, urlImage);
-            notesViewModel.setNote(tmp);
-        }
 
         return view;
     }

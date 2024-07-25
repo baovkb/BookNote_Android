@@ -24,11 +24,16 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LiveData;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.vkbao.notebook.fragments.ListNoteFragment;
 import com.vkbao.notebook.R;
+import com.vkbao.notebook.models.Note;
+import com.vkbao.notebook.respository.NoteRepository;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     private static final String TAG = "MainActivity";
@@ -118,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             //add fragment to activity
             fragmentManager.beginTransaction().add(R.id.note_list_fragment, new ListNoteFragment()).commit();
+
         }
 
     }
