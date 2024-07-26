@@ -1,20 +1,23 @@
 package com.vkbao.notebook.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vkbao.notebook.R;
 import com.vkbao.notebook.models.Note;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder> {
-    private List<Note> notes;
+public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NotesViewHolder> {
+    private List<Note> notes = new ArrayList<>();
 
     @NonNull
     @Override
@@ -26,6 +29,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
     @Override
     public void onBindViewHolder(@NonNull NotesViewHolder holder, int position) {
         holder.getNoteTitleTextView().setText(notes.get(position).getTitle());
+        holder.getNoteContentTextView().setText(notes.get(position).getDescription());
 //        urlImage
     }
 

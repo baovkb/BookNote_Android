@@ -3,6 +3,7 @@ package com.vkbao.notebook.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,14 +14,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.vkbao.notebook.R;
-import com.vkbao.notebook.adapters.NotesAdapter;
-import com.vkbao.notebook.viewmodels.NotesViewModel;
+import com.vkbao.notebook.adapters.NoteAdapter;
+import com.vkbao.notebook.models.Note;
+import com.vkbao.notebook.viewmodels.NoteViewModel;
+
+import java.util.List;
 
 public class ListNoteFragment extends Fragment {
     private RecyclerView recyclerView;
     private ViewGroup emptyNoteViewGroup;
-    private NotesAdapter notesAdapter;
-    private NotesViewModel notesViewModel;
+    private NoteAdapter noteAdapter;
+    private NoteViewModel noteViewModel;
     private static final String TAG = "ListNoteFragment";
 
     public ListNoteFragment() {
@@ -40,21 +44,23 @@ public class ListNoteFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerView_note_list);
         emptyNoteViewGroup = view.findViewById(R.id.empty_note);
 
-        notesAdapter = new NotesAdapter();
+        noteAdapter = new NoteAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(notesAdapter);
+        recyclerView.setAdapter(noteAdapter);
 
-        notesViewModel = new ViewModelProvider(this).get(NotesViewModel.class);
+        noteViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
 
-        notesViewModel.getNotes().observe(getViewLifecycleOwner(), notes -> {
-            Log.d(TAG, "notes:" + notes);
-            if (notes.isEmpty()) {
-                recyclerView.setVisibility(View.GONE);
-                emptyNoteViewGroup.setVisibility(View.VISIBLE);
-            } else {
-                recyclerView.setVisibility(View.VISIBLE);
-                emptyNoteViewGroup.setVisibility(View.GONE);
-                notesAdapter.setNotes(notes);
+        noteViewModel.getAllNotes().observe(getViewLifecycleOwner(), new Observer<List<Note>>() {
+            @Override
+            public void onChanged(List<Note> notes) {
+                if (notes.isEmpty()) {
+                    recyclerView.setVisibility(View.GONE);
+                    emptyNoteViewGroup.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    emptyNoteViewGroup.setVisibility(View.GONE);
+                    noteAdapter.setNotes(notes);
+                }
             }
         });
 

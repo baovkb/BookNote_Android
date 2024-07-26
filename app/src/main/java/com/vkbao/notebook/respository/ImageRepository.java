@@ -5,10 +5,8 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 
 import com.vkbao.notebook.daos.ImageDao;
-import com.vkbao.notebook.daos.NoteDao;
 import com.vkbao.notebook.databases.AppDatabase;
 import com.vkbao.notebook.models.Image;
-import com.vkbao.notebook.models.Note;
 
 import java.util.List;
 
@@ -22,16 +20,16 @@ public class ImageRepository {
         allImages = imageDao.getAllImages();
     }
 
-    public void insert(Image image) {
-        new InsertThread(imageDao, image).start();
+    public void insert(Image...images) {
+        new InsertThread(imageDao, images).start();
     }
 
-    public void update(Image image) {
-        new UpdateThread(imageDao, image).start();
+    public void update(Image...images) {
+        new UpdateThread(imageDao, images).start();
     }
 
-    public void delete(Image image) {
-        new DeleteThread(imageDao, image).start();
+    public void delete(Image...images) {
+        new DeleteThread(imageDao, images).start();
     }
 
     public LiveData<List<Image>> getAllImages() {
@@ -41,46 +39,46 @@ public class ImageRepository {
     //Runnable for database CRUD
     private static class InsertThread extends Thread {
         private ImageDao imageDao;
-        private Image image;
+        private Image[] images;
 
-        private InsertThread(ImageDao imageDao, Image image) {
+        private InsertThread(ImageDao imageDao, Image[] images) {
             this.imageDao = imageDao;
-            this.image = image;
+            this.images = images;
         }
 
         @Override
         public void run() {
-            imageDao.insert(image);
+            imageDao.insert(images);
         }
     }
 
     private static class DeleteThread extends Thread {
         private ImageDao imageDao;
-        private Image image;
+        private Image[] images;
 
-        private DeleteThread(ImageDao imageDao, Image image) {
+        private DeleteThread(ImageDao imageDao, Image[] images) {
             this.imageDao = imageDao;
-            this.image = image;
+            this.images = images;
         }
 
         @Override
         public void run() {
-            imageDao.delete(image);
+            imageDao.delete(images);
         }
     }
 
     private static class UpdateThread extends Thread {
         private ImageDao imageDao;
-        private Image image;
+        private Image[] images;
 
-        private UpdateThread(ImageDao imageDao, Image image) {
+        private UpdateThread(ImageDao imageDao, Image[] images) {
             this.imageDao = imageDao;
-            this.image = image;
+            this.images = images;
         }
 
         @Override
         public void run() {
-            imageDao.update(image);
+            imageDao.update(images);
         }
     }
 }

@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData;
 import com.vkbao.notebook.daos.LabelDao;
 import com.vkbao.notebook.databases.AppDatabase;
 import com.vkbao.notebook.models.Label;
-import com.vkbao.notebook.models.Note;
 
 import java.util.List;
 
@@ -21,64 +20,64 @@ public class LabelRepository {
         allLabels = labelDao.getAllLabels();
     }
 
-    LiveData<List<Label>> getAllLabels() {
+    public LiveData<List<Label>> getAllLabels() {
         return allLabels;
     }
 
-    public void insert(Label label) {
-        new InsertThread(labelDao, label).start();
+    public void insert(Label...labels) {
+        new InsertThread(labelDao, labels).start();
     }
 
-    public void update(Label label) {
-        new UpdateThread(labelDao, label).start();
+    public void update(Label...labels) {
+        new UpdateThread(labelDao, labels).start();
     }
 
-    public void delete(Label label) {
-        new DeleteThread(labelDao, label).start();
+    public void delete(Label...labels) {
+        new DeleteThread(labelDao, labels).start();
     }
 
     private static class InsertThread extends Thread {
         private LabelDao labelDao;
-        Label label;
+        Label[] labels;
 
-        private InsertThread(LabelDao labelDao, Label label) {
+        private InsertThread(LabelDao labelDao, Label...labesl) {
             this.labelDao = labelDao;
-            this.label = label;
+            this.labels = labels;
         }
 
         @Override
         public void run() {
-            labelDao.insert(label);
+            labelDao.insert(labels);
         }
     }
 
     private static class UpdateThread extends Thread {
         private LabelDao labelDao;
-        Label label;
+        Label[] labels;
 
-        private UpdateThread(LabelDao labelDao, Label label) {
+        private UpdateThread(LabelDao labelDao, Label...labels) {
             this.labelDao = labelDao;
-            this.label = label;
+            this.labels = labels;
         }
 
         @Override
         public void run() {
-            labelDao.update(label);
+            labelDao.update(labels);
         }
     }
 
     private static class DeleteThread extends Thread {
         private LabelDao labelDao;
-        Label label;
+        Label[] labels;
 
-        private DeleteThread(LabelDao labelDao, Label label) {
+        private DeleteThread(LabelDao labelDao, Label...labels) {
             this.labelDao = labelDao;
-            this.label = label;
+            this.labels = labels;
         }
 
         @Override
         public void run() {
-            labelDao.delete(label);
+            labelDao.delete(labels);
         }
     }
 }

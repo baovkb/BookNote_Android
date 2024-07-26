@@ -34,6 +34,9 @@ android {
 dependencies {
     implementation ("androidx.room:room-runtime:2.6.1")
     implementation(libs.room.common)
+    implementation(libs.legacy.support.v4)
+    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
     annotationProcessor ("androidx.room:room-compiler:2.6.1")
     implementation(libs.appcompat)
     implementation(libs.material)

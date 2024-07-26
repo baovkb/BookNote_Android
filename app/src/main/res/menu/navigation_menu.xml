@@ -3,11 +3,11 @@
     <group
         android:checkableBehavior="none">
         <item
-            android:id="@+id/activity_main_drawer_item_info"
+            android:id="@+id/main_screen_fragment_drawer_item_info"
             android:icon="@drawable/ic_action_info"
             android:title="@string/menu_item_about_app" />
         <item
-            android:id="@+id/activity_main_drawer_item_help"
+            android:id="@+id/main_screen_fragment_drawer_item_help"
             android:icon="@drawable/ic_action_help"
             android:title="@string/menu_item_help" />
     </group>

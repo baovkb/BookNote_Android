@@ -21,16 +21,16 @@ public class NoteRepository {
         allNotes = noteDao.getAllNotes();
     }
 
-    public void insert(Note note) {
-        new InsertThread(noteDao, note).start();
+    public void insert(Note...notes) {
+        new InsertThread(noteDao, notes).start();
     }
 
-    public void update(Note note) {
-        new UpdateThread(noteDao, note).start();
+    public void update(Note...notes) {
+        new UpdateThread(noteDao, notes).start();
     }
 
-    public void delete(Note note) {
-        new DeleteThread(noteDao, note).start();
+    public void delete(Note...notes) {
+        new DeleteThread(noteDao, notes).start();
     }
 
     public LiveData<List<Note>> getAllNotes() {
@@ -40,46 +40,46 @@ public class NoteRepository {
     //Runnable for database CRUD
     private static class InsertThread extends Thread {
         private NoteDao noteDao;
-        private Note note;
+        private Note[] notes;
 
-        private InsertThread(NoteDao noteDao, Note note) {
+        private InsertThread(NoteDao noteDao, Note[] notes) {
             this.noteDao = noteDao;
-            this.note = note;
+            this.notes = notes;
         }
 
         @Override
         public void run() {
-            noteDao.insert(note);
+            noteDao.insert(notes);
         }
     }
 
     private static class DeleteThread extends Thread {
         private NoteDao noteDao;
-        private Note note;
+        private Note[] notes;
 
-        private DeleteThread(NoteDao noteDao, Note notes) {
+        private DeleteThread(NoteDao noteDao, Note[] notes) {
             this.noteDao = noteDao;
-            this.note = note;
+            this.notes = notes;
         }
 
         @Override
         public void run() {
-            noteDao.delete(note);
+            noteDao.delete(notes);
         }
     }
 
     private static class UpdateThread extends Thread {
         private NoteDao noteDao;
-        private Note note;
+        private Note[] notes;
 
-        private UpdateThread(NoteDao noteDao, Note note) {
+        private UpdateThread(NoteDao noteDao, Note[] notes) {
             this.noteDao = noteDao;
-            this.note = note;
+            this.notes = notes;
         }
 
         @Override
         public void run() {
-            noteDao.update(note);
+            noteDao.update(notes);
         }
     }
 }

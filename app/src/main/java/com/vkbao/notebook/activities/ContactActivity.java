@@ -19,10 +19,10 @@ import com.vkbao.notebook.fragments.AboutFragment;
 import com.vkbao.notebook.fragments.HelpFragment;
 
 public class ContactActivity extends AppCompatActivity {
-    static final class SHOW_WHAT {
-        static final String KEY_SHOW_WHAT = "SHOW_WHAT";
-        static final String VALUE_SHOW_HELP = "SHOW_HELP";
-        static final String VALUE_SHOW_ABOUT = "SHOW_ABOUT";
+    public static final class SHOW_WHAT {
+        public static final String KEY_SHOW_WHAT = "SHOW_WHAT";
+        public static final String VALUE_SHOW_HELP = "SHOW_HELP";
+        public static final String VALUE_SHOW_ABOUT = "SHOW_ABOUT";
     }
 
     @Override

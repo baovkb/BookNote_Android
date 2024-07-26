@@ -19,7 +19,7 @@
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
 
-<!--    Floating button-->
+    <!--    Floating button-->
     <string name="floating_button_add_label">Add label</string>
     <string name="floating_button_add_note">Add note</string>
 

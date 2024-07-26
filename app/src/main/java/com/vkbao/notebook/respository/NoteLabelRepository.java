@@ -4,11 +4,8 @@ import android.app.Application;
 
 import androidx.lifecycle.LiveData;
 
-import com.vkbao.notebook.daos.ImageDao;
 import com.vkbao.notebook.daos.NoteLabelDao;
 import com.vkbao.notebook.databases.AppDatabase;
-import com.vkbao.notebook.models.Image;
-import com.vkbao.notebook.models.Note;
 import com.vkbao.notebook.models.NoteLabel;
 
 import java.util.List;
@@ -23,60 +20,64 @@ public class NoteLabelRepository {
         allNoteLabel = noteLabelDao.getAllNoteLabel();
     }
 
-    public void insert(NoteLabel noteLabel) {
-        new InsertThread(noteLabelDao, noteLabel).start();
+    public void insert(NoteLabel...noteLabels) {
+        new InsertThread(noteLabelDao, noteLabels).start();
     }
 
-    public void update(NoteLabel noteLabel) {
-        new UpdateThread(noteLabelDao, noteLabel).start();
+    public void update(NoteLabel...noteLabels) {
+        new UpdateThread(noteLabelDao, noteLabels).start();
     }
 
-    public void delete(NoteLabel noteLabel) {
-        new DeleteThread(noteLabelDao, noteLabel).start();
+    public void delete(NoteLabel...noteLabels) {
+        new DeleteThread(noteLabelDao, noteLabels).start();
+    }
+
+    public LiveData<List<NoteLabel>> getAllNoteLabel() {
+        return allNoteLabel;
     }
 
     private static class InsertThread extends Thread {
         private NoteLabelDao noteLabelDao;
-        private NoteLabel noteLabel;
+        private NoteLabel[] noteLabels;
 
-        private InsertThread(NoteLabelDao noteLabelDao, NoteLabel noteLabel) {
+        private InsertThread(NoteLabelDao noteLabelDao, NoteLabel[] noteLabels) {
             this.noteLabelDao = noteLabelDao;
-            this.noteLabel = noteLabel;
+            this.noteLabels = noteLabels;
         }
 
         @Override
         public void run() {
-            noteLabelDao.insert(noteLabel);
+            noteLabelDao.insert(noteLabels);
         }
     }
 
     private static class UpdateThread extends Thread {
         private NoteLabelDao noteLabelDao;
-        private NoteLabel noteLabel;
+        private NoteLabel[] noteLabels;
 
-        private UpdateThread(NoteLabelDao noteLabelDao, NoteLabel noteLabel) {
+        private UpdateThread(NoteLabelDao noteLabelDao, NoteLabel[] noteLabels) {
             this.noteLabelDao = noteLabelDao;
-            this.noteLabel = noteLabel;
+            this.noteLabels = noteLabels;
         }
 
         @Override
         public void run() {
-            noteLabelDao.update(noteLabel);
+            noteLabelDao.update(noteLabels);
         }
     }
 
     private static class DeleteThread extends Thread {
         private NoteLabelDao noteLabelDao;
-        private NoteLabel noteLabel;
+        private NoteLabel[] noteLabels;
 
-        private DeleteThread(NoteLabelDao noteLabelDao, NoteLabel noteLabel) {
+        private DeleteThread(NoteLabelDao noteLabelDao, NoteLabel[] noteLabels) {
             this.noteLabelDao = noteLabelDao;
-            this.noteLabel = noteLabel;
+            this.noteLabels = noteLabels;
         }
 
         @Override
         public void run() {
-            noteLabelDao.delete(noteLabel);
+            noteLabelDao.delete(noteLabels);
         }
     }
 }
