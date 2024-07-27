@@ -1,5 +1,6 @@
 package com.vkbao.notebook.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NotesViewHolder> {
-    private List<Note> notes = new ArrayList<>();
+    public interface OnItemClickListener<V> {
+        public void onClick(V note_id);
+    }
+
+    private List<Note> notes;
+    OnItemClickListener listener;
+
+    public NoteAdapter(OnItemClickListener<Long> listener) {
+        this.notes = new ArrayList<>();
+        this.listener = listener;
+    }
 
     @NonNull
     @Override
@@ -27,10 +38,17 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NotesViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull NotesViewHolder holder, int position) {
-        holder.getNoteTitleTextView().setText(notes.get(position).getTitle());
-        holder.getNoteContentTextView().setText(notes.get(position).getDescription());
-        holder.set(notes.get(position).getNote_id());
-//        urlImage
+        Note noteItem = notes.get(position);
+        holder.getNoteTitleTextView().setText(noteItem.getTitle());
+        holder.getNoteContentTextView().setText(noteItem.getDescription());
+        holder.set(noteItem.getNote_id());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                long note_id_clicked = holder.getNote_id();
+                listener.onClick(note_id_clicked);
+            }
+        });
     }
 
     @Override
@@ -43,7 +61,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NotesViewHolde
         notifyDataSetChanged();
     }
 
-    public static class NotesViewHolder extends RecyclerView.ViewHolder implements GetSetAttributeItemAdapter {
+    class NotesViewHolder extends RecyclerView.ViewHolder implements GetSetAttributeItemAdapter {
         private TextView noteTitleTextView;
         private TextView noteContentTextView;
         private long note_id;
@@ -69,6 +87,14 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NotesViewHolde
         @Override
         public void set(Object value) {
             this.note_id = (long)value;
+        }
+
+        public long getNote_id() {
+            return note_id;
+        }
+
+        public void setNote_id(long note_id) {
+            this.note_id = note_id;
         }
     }
 }

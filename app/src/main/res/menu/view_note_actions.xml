@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/edit_note"
+        android:title="@string/common_action_edit"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/delete_note"
+        android:title="@string/common_action_delete"
+        app:showAsAction="always"></item>
+</menu>

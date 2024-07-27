@@ -5,7 +5,9 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vkbao.notebook.adapters.NoteAdapter;
+import com.vkbao.notebook.helper.CallBack;
 import com.vkbao.notebook.helper.GetSetAttributeItemAdapter;
+import com.vkbao.notebook.models.Note;
 import com.vkbao.notebook.viewmodels.NoteViewModel;
 
 public class NoteItemTouch extends ItemTouchHelper.SimpleCallback {
@@ -30,5 +32,12 @@ public class NoteItemTouch extends ItemTouchHelper.SimpleCallback {
         noteAdapter.notifyItemChanged(position_swpipe);
         long note_id = (long)((GetSetAttributeItemAdapter)viewHolder).get();
         noteViewModel.deleteByID(note_id);
+
+//        noteViewModel.getNoteByID(note_id, new CallBack<Note>() {
+//            @Override
+//            public void onResult(Note result) {
+//
+//            }
+//        });
     }
 }

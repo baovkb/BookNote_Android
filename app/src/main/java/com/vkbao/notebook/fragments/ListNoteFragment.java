@@ -3,6 +3,7 @@ package com.vkbao.notebook.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.vkbao.notebook.R;
 import com.vkbao.notebook.adapters.NoteAdapter;
+import com.vkbao.notebook.helper.CallBack;
 import com.vkbao.notebook.itemtouch.NoteItemTouch;
 import com.vkbao.notebook.models.Note;
 import com.vkbao.notebook.viewmodels.NoteViewModel;
@@ -46,11 +48,23 @@ public class ListNoteFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerView_note_list);
         emptyNoteViewGroup = view.findViewById(R.id.empty_note);
 
-        noteAdapter = new NoteAdapter();
+        noteViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
+
+        noteAdapter = new NoteAdapter(new NoteAdapter.OnItemClickListener<Long>() {
+            @Override
+            public void onClick(Long note_id) {
+                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.main_screen_fragment, new ViewNoteFragment())
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(noteAdapter);
 
-        noteViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new NoteItemTouch(noteViewModel, noteAdapter));
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
@@ -70,4 +84,6 @@ public class ListNoteFragment extends Fragment {
 
         return view;
     }
+
+
 }

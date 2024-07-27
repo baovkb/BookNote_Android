@@ -4,6 +4,8 @@
 <!--    Hành động-->
     <string name="common_action_close">Đóng</string>
     <string name="common_action_save">Lưu</string>
+    <string name="common_action_edit">Sửa</string>
+    <string name="common_action_delete">Xóa</string>
 
 <!--   Các Menu-->
     <string name="menu_item_search">Tìm kiếm</string>
@@ -13,9 +15,10 @@
 
 <!--    Màn hình chính-->
     <string name="main_screen_empty_note">Chưa có ghi chú nào!</string>
-    <string name="main_screen_add_category">Thêm chủ đề</string>
-    <string name="main_screen_add_note">Thêm địa điểm</string>
-    <string name="main_screen_edit_note">Sửa địa điểm</string>
+    <string name="main_screen_add_category">Thêm nhãn</string>
+    <string name="main_screen_add_note">Thêm ghi chú</string>
+    <string name="main_screen_view_note">Ghi chú</string>
+    <string name="main_screen_edit_note">Sửa ghi chú</string>
 
     <!--    Floating button-->
     <string name="floating_button_add_label">Thêm nhãn</string>

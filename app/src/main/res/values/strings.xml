@@ -4,6 +4,8 @@
     <!--    Action-->
     <string name="common_action_close">Close</string>
     <string name="common_action_save">Save</string>
+    <string name="common_action_edit">Edit</string>
+    <string name="common_action_delete">Delete</string>
 
     <!--   Menu-->
     <string name="menu_item_search">Search</string>
@@ -16,6 +18,7 @@
     <string name="main_screen_add_category">Add category</string>
     <string name="main_screen_add_note">Add note</string>
     <string name="main_screen_edit_note">Edit note</string>
+    <string name="main_screen_view_note">Note</string>
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
 

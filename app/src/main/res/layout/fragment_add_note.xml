@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.EditNoteFragment">
+    tools:context=".fragments.AddNoteFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/edit_note_toolbar"
+            android:id="@+id/add_note_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
@@ -22,20 +23,20 @@
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_action_arrow_back"
             app:popupTheme="@style/Theme.NoteBook"
-            app:title="@string/common_action_edit"
+            app:title="@string/main_screen_add_note"
             app:titleTextColor="@color/white" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/edit_note_title_text_input_layout"
+            android:id="@+id/add_note_title_text_input_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:layout_marginVertical="4dp"
-            app:layout_constraintTop_toBottomOf="@+id/edit_note_toolbar"
+            app:layout_constraintTop_toBottomOf="@+id/add_note_toolbar"
             tools:layout_editor_absoluteX="8dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_note_title_text_input_field"
+                android:id="@+id/add_note_title_text_input_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
@@ -43,7 +44,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/edit_note_description_text_input_layout"
+            android:id="@+id/add_note_description_text_input_layout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintHeight_default="spread"
@@ -51,10 +52,10 @@
             android:layout_marginHorizontal="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edit_note_title_text_input_layout">
+            app:layout_constraintTop_toBottomOf="@+id/add_note_title_text_input_layout">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_note_description_text_input_field"
+                android:id="@+id/add_note_description_text_input_field"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="top|left"
@@ -62,4 +63,5 @@
                 android:singleLine="false" />
         </com.google.android.material.textfield.TextInputLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </FrameLayout>

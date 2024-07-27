@@ -225,12 +225,10 @@ public class MainScreenFragment
             isHidden = true;
 
             FragmentManager fragmentManager = getParentFragmentManager();
-            EditNoteFragment editNoteFragment = new EditNoteFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString(EditNoteFragment.SHOW_TITLE.KEY_SHOW_WHAT, EditNoteFragment.SHOW_TITLE.VALUE_SHOW_ADD_NOTE);
-            editNoteFragment.setArguments(bundle);
-            fragmentManager.beginTransaction()
-                    .replace(R.id.main_screen_fragment, editNoteFragment)
+
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.main_screen_fragment, new AddNoteFragment())
                     .addToBackStack(null)
                     .commit();
         }

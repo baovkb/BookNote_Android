@@ -3,17 +3,13 @@ package com.vkbao.notebook.fragments;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,24 +18,25 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.textfield.TextInputEditText;
-import com.vkbao.notebook.activities.MainActivity;
-import com.vkbao.notebook.helper.CallBack;
-import com.vkbao.notebook.helper.DrawerLocker;
 import com.vkbao.notebook.R;
+import com.vkbao.notebook.activities.MainActivity;
 import com.vkbao.notebook.helper.TimeConvertor;
 import com.vkbao.notebook.models.Note;
+import com.vkbao.notebook.viewmodels.ImageViewModel;
+import com.vkbao.notebook.viewmodels.NoteLabelViewModel;
 import com.vkbao.notebook.viewmodels.NoteViewModel;
 
-import java.util.List;
-
-public class EditNoteFragment extends Fragment {
+public class AddNoteFragment extends Fragment {
     private NoteViewModel noteViewModel;
     private TextInputEditText noteTitle;
     private TextInputEditText noteDescription;
+    private NoteLabelViewModel noteLabelViewModel;
+    private ImageViewModel imageViewModel;
 
-    public EditNoteFragment() {
+    public AddNoteFragment() {
         // Required empty public constructor
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,30 +46,28 @@ public class EditNoteFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_edit_note, container, false);
+        View view = inflater.inflate(R.layout.fragment_add_note, container, false);
 
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.edit_note_toolbar);
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.add_note_toolbar);
         ((MainActivity)getActivity()).setSupportActionBar(toolbar);
         ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((MainActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
 
         noteViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
 
-        noteTitle = view.findViewById(R.id.edit_note_title_text_input_field);
-        noteDescription = view.findViewById(R.id.edit_note_description_text_input_field);
+        noteTitle = view.findViewById(R.id.add_note_title_text_input_field);
+        noteDescription = view.findViewById(R.id.add_note_description_text_input_field);
 
         requireActivity().addMenuProvider(getMenuProvider(), getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         return view;
     }
 
-    //Handle Action Menu
     private MenuProvider getMenuProvider() {
         return new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                menuInflater.inflate(R.menu.edit_note_actions, menu);
+                menuInflater.inflate(R.menu.add_note_actions, menu);
             }
 
             @Override
@@ -86,9 +81,9 @@ public class EditNoteFragment extends Fragment {
                     String title = noteTitle.getText().toString();
                     String description = noteDescription.getText().toString();
                     if (!title.trim().isEmpty() || !description.trim().isEmpty()) {
-                        noteViewModel.update();
-                    } else {
-                        noteViewModel.delete();
+                        long currentUnix = TimeConvertor.getCurrentUnixSecond();
+                        Note[] notes = {new Note(title, description, currentUnix, currentUnix)};
+                        noteViewModel.insert(notes);
                     }
                     fragmentManager.popBackStack();
                 }
@@ -97,4 +92,3 @@ public class EditNoteFragment extends Fragment {
         };
     }
 }
-
