@@ -19,19 +19,19 @@ import org.jetbrains.annotations.NotNull;
                     onDelete = ForeignKey.CASCADE)
         })
 public class NoteLabel {
-    private int note_id;
-    private int label_id;
+    private long note_id;
+    private long label_id;
 
-    public NoteLabel(int note_id, int label_id) {
+    public NoteLabel(long note_id, long label_id) {
         this.note_id = note_id;
         this.label_id = label_id;
     }
 
-    public int getNote_id() {
+    public long getNote_id() {
         return note_id;
     }
 
-    public int getLabel_id() {
+    public long getLabel_id() {
         return label_id;
     }
 

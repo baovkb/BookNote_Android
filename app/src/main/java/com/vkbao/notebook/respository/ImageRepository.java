@@ -9,10 +9,13 @@ import com.vkbao.notebook.databases.AppDatabase;
 import com.vkbao.notebook.models.Image;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ImageRepository {
     private ImageDao imageDao;
     private LiveData<List<Image>> allImages;
+    private static ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public ImageRepository(Application application) {
         AppDatabase database = AppDatabase.getInstance(application);
@@ -21,64 +24,27 @@ public class ImageRepository {
     }
 
     public void insert(Image...images) {
-        new InsertThread(imageDao, images).start();
+        executorService.execute(() -> imageDao.insert(images));
     }
 
     public void update(Image...images) {
-        new UpdateThread(imageDao, images).start();
+        executorService.execute(() -> imageDao.update(images));
     }
 
     public void delete(Image...images) {
-        new DeleteThread(imageDao, images).start();
+        executorService.execute(() -> imageDao.delete(images));
+    }
+
+    public void deleteAll() {
+        executorService.execute(() -> imageDao.deleteAllImages());
+    }
+
+    public void deleteByID(long image_id) {
+        executorService.execute(() -> imageDao.deleteImageByID(image_id));
     }
 
     public LiveData<List<Image>> getAllImages() {
         return allImages;
     }
 
-    //Runnable for database CRUD
-    private static class InsertThread extends Thread {
-        private ImageDao imageDao;
-        private Image[] images;
-
-        private InsertThread(ImageDao imageDao, Image[] images) {
-            this.imageDao = imageDao;
-            this.images = images;
-        }
-
-        @Override
-        public void run() {
-            imageDao.insert(images);
-        }
-    }
-
-    private static class DeleteThread extends Thread {
-        private ImageDao imageDao;
-        private Image[] images;
-
-        private DeleteThread(ImageDao imageDao, Image[] images) {
-            this.imageDao = imageDao;
-            this.images = images;
-        }
-
-        @Override
-        public void run() {
-            imageDao.delete(images);
-        }
-    }
-
-    private static class UpdateThread extends Thread {
-        private ImageDao imageDao;
-        private Image[] images;
-
-        private UpdateThread(ImageDao imageDao, Image[] images) {
-            this.imageDao = imageDao;
-            this.images = images;
-        }
-
-        @Override
-        public void run() {
-            imageDao.update(images);
-        }
-    }
 }

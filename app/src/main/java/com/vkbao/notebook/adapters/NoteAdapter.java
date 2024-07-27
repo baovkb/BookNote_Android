@@ -1,16 +1,15 @@
 package com.vkbao.notebook.adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vkbao.notebook.R;
+import com.vkbao.notebook.helper.GetSetAttributeItemAdapter;
 import com.vkbao.notebook.models.Note;
 
 import java.util.ArrayList;
@@ -30,6 +29,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NotesViewHolde
     public void onBindViewHolder(@NonNull NotesViewHolder holder, int position) {
         holder.getNoteTitleTextView().setText(notes.get(position).getTitle());
         holder.getNoteContentTextView().setText(notes.get(position).getDescription());
+        holder.set(notes.get(position).getNote_id());
 //        urlImage
     }
 
@@ -43,10 +43,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NotesViewHolde
         notifyDataSetChanged();
     }
 
-
-    class NotesViewHolder extends RecyclerView.ViewHolder {
+    public static class NotesViewHolder extends RecyclerView.ViewHolder implements GetSetAttributeItemAdapter {
         private TextView noteTitleTextView;
         private TextView noteContentTextView;
+        private long note_id;
 
         NotesViewHolder(View itemView) {
             super(itemView);
@@ -59,6 +59,16 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NotesViewHolde
         }
         public TextView getNoteContentTextView() {
             return noteContentTextView;
+        }
+
+        @Override
+        public Object get() {
+            return this.note_id;
+        }
+
+        @Override
+        public void set(Object value) {
+            this.note_id = (long)value;
         }
     }
 }

@@ -31,7 +31,10 @@ public class LabelViewModel extends AndroidViewModel {
     public void delete(Label...labels) {
         labelRepository.delete(labels);
     }
-    public LiveData<List<Label>> getAllNotes() {
+    public void deleteAll() {
+        labelRepository.deleteAll();
+    }
+    public LiveData<List<Label>> getAllLabel() {
         return allLabel;
     }
 }

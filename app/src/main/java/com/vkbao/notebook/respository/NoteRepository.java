@@ -1,19 +1,25 @@
 package com.vkbao.notebook.respository;
 
 import android.app.Application;
+import android.os.Looper;
 import android.util.Log;
+import android.os.Handler;
 
 import androidx.lifecycle.LiveData;
 
 import com.vkbao.notebook.daos.NoteDao;
 import com.vkbao.notebook.databases.AppDatabase;
+import com.vkbao.notebook.helper.CallBack;
 import com.vkbao.notebook.models.Note;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class NoteRepository {
     private NoteDao noteDao;
     private LiveData<List<Note>> allNotes;
+    private static ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public NoteRepository(Application application) {
         AppDatabase database = AppDatabase.getInstance(application);
@@ -22,64 +28,33 @@ public class NoteRepository {
     }
 
     public void insert(Note...notes) {
-        new InsertThread(noteDao, notes).start();
+        executorService.execute(() -> noteDao.insert(notes));
     }
 
     public void update(Note...notes) {
-        new UpdateThread(noteDao, notes).start();
+        executorService.execute(() -> noteDao.update(notes));
     }
 
     public void delete(Note...notes) {
-        new DeleteThread(noteDao, notes).start();
+        executorService.execute(() -> noteDao.delete(notes));
+    }
+
+    public void deleteByID(long note_id) {
+        executorService.execute(() -> noteDao.deleteNoteByID(note_id));
+    }
+
+    public void deleteAll() {
+        executorService.execute(() -> noteDao.deleteAllNotes());
     }
 
     public LiveData<List<Note>> getAllNotes() {
         return allNotes;
     }
 
-    //Runnable for database CRUD
-    private static class InsertThread extends Thread {
-        private NoteDao noteDao;
-        private Note[] notes;
-
-        private InsertThread(NoteDao noteDao, Note[] notes) {
-            this.noteDao = noteDao;
-            this.notes = notes;
-        }
-
-        @Override
-        public void run() {
-            noteDao.insert(notes);
-        }
-    }
-
-    private static class DeleteThread extends Thread {
-        private NoteDao noteDao;
-        private Note[] notes;
-
-        private DeleteThread(NoteDao noteDao, Note[] notes) {
-            this.noteDao = noteDao;
-            this.notes = notes;
-        }
-
-        @Override
-        public void run() {
-            noteDao.delete(notes);
-        }
-    }
-
-    private static class UpdateThread extends Thread {
-        private NoteDao noteDao;
-        private Note[] notes;
-
-        private UpdateThread(NoteDao noteDao, Note[] notes) {
-            this.noteDao = noteDao;
-            this.notes = notes;
-        }
-
-        @Override
-        public void run() {
-            noteDao.update(notes);
-        }
+    public void getNoteByID(long note_id, CallBack<Note> callBack) {
+        executorService.execute(() -> {
+            Note note = noteDao.getNoteByID(note_id);
+            new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(note));
+        });
     }
 }

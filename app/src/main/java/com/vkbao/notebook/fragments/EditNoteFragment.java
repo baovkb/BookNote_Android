@@ -24,6 +24,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.vkbao.notebook.activities.MainActivity;
 import com.vkbao.notebook.helper.DrawerLocker;
 import com.vkbao.notebook.R;
+import com.vkbao.notebook.helper.TimeConvertor;
 import com.vkbao.notebook.models.Note;
 import com.vkbao.notebook.viewmodels.NoteViewModel;
 
@@ -97,7 +98,8 @@ public class EditNoteFragment extends Fragment {
                     String title = noteTitle.getText().toString();
                     String description = noteDescription.getText().toString();
                     if (title != "" && description != "") {
-                        Note[] notes = {new Note(title, description)};
+                        long currentUnix = TimeConvertor.getCurrentUnixSecond();
+                        Note[] notes = {new Note(title, description, currentUnix, currentUnix)};
                         noteViewModel.insert(notes);
                     }
                     fragmentManager.popBackStack();
@@ -120,3 +122,4 @@ public class EditNoteFragment extends Fragment {
         }
     }
 }
+

@@ -13,6 +13,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.room.Database;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,6 +30,8 @@ import com.google.android.material.navigation.NavigationView;
 import com.vkbao.notebook.activities.ContactActivity;
 import com.vkbao.notebook.activities.MainActivity;
 import com.vkbao.notebook.R;
+import com.vkbao.notebook.respository.NoteRepository;
+import com.vkbao.notebook.viewmodels.NoteViewModel;
 
 public class MainScreenFragment
         extends Fragment
@@ -55,6 +59,8 @@ public class MainScreenFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main_screen, container, false);
 

@@ -12,18 +12,18 @@ import androidx.room.PrimaryKey;
                 onDelete = ForeignKey.CASCADE))
 public class Image {
     @PrimaryKey(autoGenerate = true)
-    private int image_id;
-    private int note_id;
+    private long image_id;
+    private long note_id;
     private String url;
     private String description;
 
-    public Image(int note_id, String url, String description) {
+    public Image(long note_id, String url, String description) {
         this.note_id = note_id;
         this.url = url;
         this.description = description;
     }
 
-    public int getImage_id() {
+    public long getImage_id() {
         return image_id;
     }
 
@@ -35,7 +35,7 @@ public class Image {
         return description;
     }
 
-    public int getNote_id() {
+    public long getNote_id() {
         return note_id;
     }
 

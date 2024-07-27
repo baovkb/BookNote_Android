@@ -24,6 +24,9 @@ public interface NoteLabelDao {
     @Delete
     void delete(NoteLabel...noteLabels);
 
+    @Query("DELETE FROM NoteLabel")
+    void deleteAllNoteLabel();
+
     @Query("SELECT * FROM NoteLabel")
     LiveData<List<NoteLabel>> getAllNoteLabel();
 
@@ -31,11 +34,11 @@ public interface NoteLabelDao {
             "WHERE Note.note_id = NoteLabel.note_id " +
             "AND Label.label_id = NoteLabel.label_id " +
             "AND Note.note_id = :note_id")
-    List<Label> getLabelsByNoteID(final int note_id);
+    List<Label> getLabelsByNoteID(final long note_id);
 
     @Query("SELECT * FROM Note, Label, NoteLabel " +
             "WHERE Note.note_id = NoteLabel.note_id " +
             "AND Label.label_id = NoteLabel.label_id " +
             "AND Label.label_id = :label_id")
-    List<Note> getNotesByLabelID(final int label_id);
+    List<Note> getNotesByLabelID(final long label_id);
 }

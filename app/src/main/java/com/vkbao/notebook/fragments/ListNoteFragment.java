@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 
 import com.vkbao.notebook.R;
 import com.vkbao.notebook.adapters.NoteAdapter;
+import com.vkbao.notebook.itemtouch.NoteItemTouch;
 import com.vkbao.notebook.models.Note;
 import com.vkbao.notebook.viewmodels.NoteViewModel;
 
@@ -49,6 +51,8 @@ public class ListNoteFragment extends Fragment {
         recyclerView.setAdapter(noteAdapter);
 
         noteViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new NoteItemTouch(noteViewModel, noteAdapter));
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         noteViewModel.getAllNotes().observe(getViewLifecycleOwner(), new Observer<List<Note>>() {
             @Override

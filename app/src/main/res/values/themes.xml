@@ -32,6 +32,10 @@
         <item name="android:paddingBottom">6dp</item>
     </style>
 
+    <declare-styleable name="item_note_id_row">
+        <attr name="note_id" format="integer"></attr>
+    </declare-styleable>
+
     <style name="Theme.NoteBook" parent="Base.Theme.NoteBook" />
 
 </resources>

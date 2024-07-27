@@ -22,7 +22,7 @@ import com.vkbao.notebook.models.NoteLabel;
         Label.class,
         Note.class,
         NoteLabel.class},
-        version = 1,
+        version = 2,
         exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase instance;

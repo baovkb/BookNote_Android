@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "Label")
 public class Label {
     @PrimaryKey(autoGenerate = true)
-    private int label_id;
+    private long label_id;
 
     private String name;
 
@@ -14,11 +14,11 @@ public class Label {
         this.name = name;
     }
 
-    public int getLabel_id() {
+    public long getLabel_id() {
         return label_id;
     }
 
-    public void setLabel_id(int label_id) {
+    public void setLabel_id(long label_id) {
         this.label_id = label_id;
     }
 

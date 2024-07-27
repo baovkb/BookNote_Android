@@ -14,14 +14,17 @@ import java.util.List;
 @Dao
 public interface LabelDao {
     @Insert
-    public void insert(Label...label);
+    void insert(Label...label);
 
     @Update
-    public void update(Label...labels);
+    void update(Label...labels);
 
     @Delete
-    public void delete(Label...labels);
+    void delete(Label...labels);
+
+    @Query("DELETE FROM Label")
+    void deleteAllLabels();
 
     @Query("SELECT * FROM Label")
-    public LiveData<List<Label>> getAllLabels();
+    LiveData<List<Label>> getAllLabels();
 }

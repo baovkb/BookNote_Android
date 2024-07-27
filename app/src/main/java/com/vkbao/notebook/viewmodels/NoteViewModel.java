@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.vkbao.notebook.helper.CallBack;
 import com.vkbao.notebook.models.Note;
 import com.vkbao.notebook.respository.NoteRepository;
 
@@ -29,6 +30,15 @@ public class NoteViewModel extends AndroidViewModel {
     }
     public void delete(Note...notes) {
         noteRepository.delete(notes);
+    }
+    public void deleteByID(long note_id) {
+        noteRepository.deleteByID(note_id);
+    }
+    public void getNoteByID(long note_id, CallBack<Note> callBack){
+        noteRepository.getNoteByID(note_id, callBack);
+    }
+    public void deleteAll() {
+        noteRepository.deleteAll();
     }
     public LiveData<List<Note>> getAllNotes() {
         return allNotes;

@@ -22,9 +22,15 @@ public interface NoteDao {
     @Delete
     void delete(Note...notes);
 
-    @Query("SELECT * FROM Note")
+    @Query("DELETE FROM Note")
+    void deleteAllNotes();
+
+    @Query("DELETE FROM Note WHERE note_id = :note_id")
+    void deleteNoteByID(long note_id);
+
+    @Query("SELECT * FROM Note ORDER BY modified_at DESC")
     LiveData<List<Note>> getAllNotes();
 
     @Query("SELECT * FROM Note WHERE note_id=:note_id")
-    Note findNoteByID(final int note_id);
+    Note getNoteByID(final long note_id);
 }

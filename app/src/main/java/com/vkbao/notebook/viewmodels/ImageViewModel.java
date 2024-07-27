@@ -30,7 +30,13 @@ public class ImageViewModel extends AndroidViewModel {
     public void delete(Image...images) {
         imageRepository.delete(images);
     }
-    public LiveData<List<Image>> getAllNotes() {
+    public void deleteAll() {
+        imageRepository.deleteAll();
+    }
+    public void deleteByID(long image_id) {
+        imageRepository.deleteByID(image_id);
+    }
+    public LiveData<List<Image>> getAll() {
         return allImages;
     }
 }

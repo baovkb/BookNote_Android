@@ -9,10 +9,13 @@ import com.vkbao.notebook.databases.AppDatabase;
 import com.vkbao.notebook.models.Label;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class LabelRepository {
     private LabelDao labelDao;
     private LiveData<List<Label>> allLabels;
+    private static ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public LabelRepository(Application application) {
         AppDatabase appDatabase = AppDatabase.getInstance(application);
@@ -25,59 +28,19 @@ public class LabelRepository {
     }
 
     public void insert(Label...labels) {
-        new InsertThread(labelDao, labels).start();
+        executorService.execute(() -> labelDao.insert(labels));
     }
 
     public void update(Label...labels) {
-        new UpdateThread(labelDao, labels).start();
+        executorService.execute(() -> labelDao.update(labels));
     }
 
     public void delete(Label...labels) {
-        new DeleteThread(labelDao, labels).start();
+        executorService.execute(() -> labelDao.delete(labels));
     }
 
-    private static class InsertThread extends Thread {
-        private LabelDao labelDao;
-        Label[] labels;
-
-        private InsertThread(LabelDao labelDao, Label...labesl) {
-            this.labelDao = labelDao;
-            this.labels = labels;
-        }
-
-        @Override
-        public void run() {
-            labelDao.insert(labels);
-        }
+    public void deleteAll() {
+        executorService.execute(() -> labelDao.deleteAllLabels());
     }
 
-    private static class UpdateThread extends Thread {
-        private LabelDao labelDao;
-        Label[] labels;
-
-        private UpdateThread(LabelDao labelDao, Label...labels) {
-            this.labelDao = labelDao;
-            this.labels = labels;
-        }
-
-        @Override
-        public void run() {
-            labelDao.update(labels);
-        }
-    }
-
-    private static class DeleteThread extends Thread {
-        private LabelDao labelDao;
-        Label[] labels;
-
-        private DeleteThread(LabelDao labelDao, Label...labels) {
-            this.labelDao = labelDao;
-            this.labels = labels;
-        }
-
-        @Override
-        public void run() {
-            labelDao.delete(labels);
-        }
-    }
 }

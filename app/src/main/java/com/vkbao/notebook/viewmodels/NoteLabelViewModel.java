@@ -30,7 +30,10 @@ public class NoteLabelViewModel extends AndroidViewModel {
     public void delete(NoteLabel...noteLabel) {
         noteLabelRepository.delete(noteLabel);
     }
-    public LiveData<List<NoteLabel>> getAllNotes() {
+    public void deleteAll() {
+        noteLabelRepository.deleteAll();
+    }
+    public LiveData<List<NoteLabel>> getAllNoteLabel() {
         return allNoteLabel;
     }
 }
