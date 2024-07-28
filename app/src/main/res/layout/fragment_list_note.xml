@@ -1,45 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.ListNoteFragment"
-    tools:ignore="ExtraText">
+    tools:context=".fragments.ListNoteFragment">
 
-<!--    Empty note list-->
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/empty_note"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="visible"
-        android:gravity="center">
-        <TextView
-            style="@style/infoTextView"
-            android:text="@string/main_screen_empty_note" />
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:layout_width="@dimen/empty_icon_width"
-            android:layout_height="@dimen/empty_icon_height"
-            android:layout_margin="8dp"
-            android:scaleType="center"
-            app:srcCompat="@drawable/empty_note" />
-    </LinearLayout>
+        <!--    Empty note list-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/empty_note"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="visible"
+            android:gravity="center">
+            <TextView
+                style="@style/infoTextView"
+                android:text="@string/main_screen_empty_note" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView_note_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:layout_width="@dimen/empty_icon_width"
+                android:layout_height="@dimen/empty_icon_height"
+                android:layout_margin="8dp"
+                android:scaleType="center"
+                app:srcCompat="@drawable/empty_note" />
+        </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_note_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

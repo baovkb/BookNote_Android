@@ -7,6 +7,9 @@
     <string name="common_action_edit">Sửa</string>
     <string name="common_action_delete">Xóa</string>
 
+    <string name="common_action_insert_img">Chèn hình ảnh</string>
+    <string name="common_action_set_label">Gắn nhãn</string>
+
 <!--   Các Menu-->
     <string name="menu_item_search">Tìm kiếm</string>
     <string name="menu_item_about_app">Về ứng dụng</string>

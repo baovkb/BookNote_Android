@@ -38,6 +38,7 @@
                 android:id="@+id/edit_note_title_text_input_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:singleLine="false"
                 android:textSize="20sp"
                 android:hint="Title" />
         </com.google.android.material.textfield.TextInputLayout>

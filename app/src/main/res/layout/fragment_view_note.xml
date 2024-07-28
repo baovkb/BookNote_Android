@@ -22,6 +22,7 @@
             app:navigationIcon="@drawable/ic_action_arrow_back"
             app:popupTheme="@style/Theme.NoteBook"
             app:title="@string/main_screen_view_note"
+
             app:titleTextColor="@color/white" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -38,6 +39,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
+                android:singleLine="false"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 android:hint="Title" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -56,9 +61,14 @@
                 android:id="@+id/view_note_description_text_input_field"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="top|left"
+                android:gravity="top"
                 android:hint="Note"
-                android:singleLine="false" />
+                android:singleLine="false"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:text="" />
+
         </com.google.android.material.textfield.TextInputLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

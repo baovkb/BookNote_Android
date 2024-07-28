@@ -82,8 +82,8 @@ public class AddNoteFragment extends Fragment {
                     String description = noteDescription.getText().toString();
                     if (!title.trim().isEmpty() || !description.trim().isEmpty()) {
                         long currentUnix = TimeConvertor.getCurrentUnixSecond();
-                        Note[] notes = {new Note(title, description, currentUnix, currentUnix)};
-                        noteViewModel.insert(notes);
+                        Note note = new Note(title, description, currentUnix, currentUnix);
+                        noteViewModel.insert(note);
                     }
                     fragmentManager.popBackStack();
                 }

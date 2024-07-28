@@ -12,19 +12,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.vkbao.notebook.R;
 import com.vkbao.notebook.helper.GetSetAttributeItemAdapter;
 import com.vkbao.notebook.models.Note;
+import com.vkbao.notebook.viewmodels.NoteViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NotesViewHolder> {
     public interface OnItemClickListener<V> {
-        public void onClick(V note_id);
+        public void onClick(V note);
     }
 
     private List<Note> notes;
     OnItemClickListener listener;
 
-    public NoteAdapter(OnItemClickListener<Long> listener) {
+    public NoteAdapter(OnItemClickListener<Note> listener) {
         this.notes = new ArrayList<>();
         this.listener = listener;
     }
@@ -45,8 +46,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NotesViewHolde
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                long note_id_clicked = holder.getNote_id();
-                listener.onClick(note_id_clicked);
+                listener.onClick(notes.get(holder.getAdapterPosition()));
             }
         });
     }

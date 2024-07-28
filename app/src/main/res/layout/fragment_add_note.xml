@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.AddNoteFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -26,6 +24,31 @@
             app:title="@string/main_screen_add_note"
             app:titleTextColor="@color/white" />
 
+<!--        Label select-->
+<!--        <LinearLayout-->
+<!--            android:id="@+id/add_note_label_container"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/add_note_toolbar">-->
+
+<!--            <androidx.recyclerview.widget.RecyclerView-->
+<!--                android:id="@+id/add_note_label_list"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content">-->
+
+<!--            </androidx.recyclerview.widget.RecyclerView>-->
+
+<!--            <Button-->
+<!--                android:layout_width="40dp"-->
+<!--                android:layout_height="20dp"-->
+<!--                android:backgroundTint="@color/colorPrimary"-->
+<!--                android:background="@drawable/more"></Button>-->
+<!--        </LinearLayout>-->
+
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/add_note_title_text_input_layout"
             android:layout_width="match_parent"
@@ -40,6 +63,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
+                android:singleLine="false"
                 android:hint="Title" />
         </com.google.android.material.textfield.TextInputLayout>
 

@@ -50,14 +50,18 @@ public class ListNoteFragment extends Fragment {
 
         noteViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
 
-        noteAdapter = new NoteAdapter(new NoteAdapter.OnItemClickListener<Long>() {
+        noteAdapter = new NoteAdapter(new NoteAdapter.OnItemClickListener<Note>() {
             @Override
-            public void onClick(Long note_id) {
+            public void onClick(Note note) {
                 FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                ViewNoteFragment viewNoteFragment = new ViewNoteFragment();
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("note", note);
+                viewNoteFragment.setArguments(bundle);
 
                 fragmentManager
                         .beginTransaction()
-                        .replace(R.id.main_screen_fragment, new ViewNoteFragment())
+                        .replace(R.id.main_screen_fragment, viewNoteFragment)
                         .addToBackStack(null)
                         .commit();
             }
@@ -65,7 +69,15 @@ public class ListNoteFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(noteAdapter);
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new NoteItemTouch(noteViewModel, noteAdapter));
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new NoteItemTouch(
+                noteViewModel,
+                noteAdapter,
+                new NoteItemTouch.OnItemSwipe<Note>() {
+                    @Override
+                    public void onSwipe(Note note) {
+                        noteViewModel.delete(note);
+                    }
+                }));
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
         noteViewModel.getAllNotes().observe(getViewLifecycleOwner(), new Observer<List<Note>>() {

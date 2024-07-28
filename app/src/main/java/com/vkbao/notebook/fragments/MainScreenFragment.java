@@ -224,7 +224,7 @@ public class MainScreenFragment
             setStateFAB(View.GONE);
             isHidden = true;
 
-            FragmentManager fragmentManager = getParentFragmentManager();
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
 
             fragmentManager
                     .beginTransaction()

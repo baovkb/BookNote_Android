@@ -7,6 +7,9 @@
     <string name="common_action_edit">Edit</string>
     <string name="common_action_delete">Delete</string>
 
+    <string name="common_action_insert_img">Insert images</string>
+    <string name="common_action_set_label">Set label</string>
+
     <!--   Menu-->
     <string name="menu_item_search">Search</string>
     <string name="menu_item_about_app">About app</string>

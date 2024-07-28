@@ -11,14 +11,20 @@ import com.vkbao.notebook.models.Note;
 import com.vkbao.notebook.viewmodels.NoteViewModel;
 
 public class NoteItemTouch extends ItemTouchHelper.SimpleCallback {
+    public interface OnItemSwipe<T> {
+        public void onSwipe(T note);
+    }
+
     private final String TAG = "NoteItemTouch";
     private NoteViewModel noteViewModel;
     private NoteAdapter noteAdapter;
+    private OnItemSwipe listener;
 
-    public NoteItemTouch(NoteViewModel noteViewModel, NoteAdapter noteAdapter) {
+    public NoteItemTouch(NoteViewModel noteViewModel, NoteAdapter noteAdapter, OnItemSwipe<Note> listener) {
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         this.noteViewModel = noteViewModel;
         this.noteAdapter = noteAdapter;
+        this.listener = listener;
     }
 
     @Override
@@ -30,14 +36,13 @@ public class NoteItemTouch extends ItemTouchHelper.SimpleCallback {
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
         int position_swpipe = viewHolder.getAdapterPosition();
         noteAdapter.notifyItemChanged(position_swpipe);
-        long note_id = (long)((GetSetAttributeItemAdapter)viewHolder).get();
-        noteViewModel.deleteByID(note_id);
+        long note_id = ((GetSetAttributeItemAdapter<Long>)viewHolder).get();
+        noteViewModel.getNoteByID(note_id, new CallBack<Note>() {
+            @Override
+            public void onResult(Note result) {
+                listener.onSwipe(result);
+            }
+        });
 
-//        noteViewModel.getNoteByID(note_id, new CallBack<Note>() {
-//            @Override
-//            public void onResult(Note result) {
-//
-//            }
-//        });
     }
 }

@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 import com.google.android.material.textfield.TextInputEditText;
 import com.vkbao.notebook.R;
 import com.vkbao.notebook.activities.MainActivity;
-import com.vkbao.notebook.helper.TimeConvertor;
 import com.vkbao.notebook.models.Note;
 import com.vkbao.notebook.viewmodels.ImageViewModel;
 import com.vkbao.notebook.viewmodels.NoteLabelViewModel;
@@ -32,6 +31,7 @@ public class ViewNoteFragment extends Fragment {
     private TextInputEditText noteDescription;
     private NoteLabelViewModel noteLabelViewModel;
     private ImageViewModel imageViewModel;
+    private Note note;
 
     public ViewNoteFragment() {
         // Required empty public constructor
@@ -40,6 +40,9 @@ public class ViewNoteFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            note = getArguments().getParcelable("note");
+        }
 
     }
 
@@ -61,6 +64,8 @@ public class ViewNoteFragment extends Fragment {
 
         requireActivity().addMenuProvider(getMenuProvider(), getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
+        updateNoteLayout();
+
         return view;
     }
 
@@ -77,16 +82,38 @@ public class ViewNoteFragment extends Fragment {
                 FragmentManager fragmentManager = getParentFragmentManager();
 
                 if (id == android.R.id.home) {
-                    fragmentManager.popBackStack();
+                    fragmentManager.popBackStackImmediate();
                 } else if (id == R.id.edit_note) {
-
+                    if (note != null) {
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("note", note);
+                        EditNoteFragment editNoteFragment = new EditNoteFragment();
+                        editNoteFragment.setArguments(bundle);
+                        fragmentManager
+                                .beginTransaction()
+                                .replace(R.id.main_screen_fragment, editNoteFragment)
+                                .addToBackStack(null)
+                                .commit();
+                    }
 
                 } else if (id == R.id.delete_note) {
-
+                    noteViewModel.delete(note);
                     fragmentManager.popBackStack();
                 }
                 return true;
             }
         };
     }
+
+    public void updateNoteLayout() {
+        if (note != null) {
+            noteTitle.setText(note.getTitle());
+            noteDescription.setText(note.getDescription());
+        }
+    }
+
+    public void updateNoteData(Note newNote) {
+        this.note = newNote;
+    }
+
 }
