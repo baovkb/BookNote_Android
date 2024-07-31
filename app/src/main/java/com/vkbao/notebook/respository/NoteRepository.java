@@ -27,8 +27,13 @@ public class NoteRepository {
         allNotes = noteDao.getAllNotes();
     }
 
-    public void insert(Note...notes) {
-        executorService.execute(() -> noteDao.insert(notes));
+    public void insert(CallBack<long[]> callBack, Note...notes) {
+        executorService.execute(() -> {
+            long[] note_ids = noteDao.insert(notes);
+            if (callBack != null) {
+                new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(note_ids));
+            }
+        });
     }
 
     public void update(Note...notes) {

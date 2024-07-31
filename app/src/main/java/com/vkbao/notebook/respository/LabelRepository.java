@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 
 import com.vkbao.notebook.daos.LabelDao;
 import com.vkbao.notebook.databases.AppDatabase;
+import com.vkbao.notebook.helper.CallBack;
 import com.vkbao.notebook.models.Label;
 
 import java.util.List;
@@ -43,4 +44,17 @@ public class LabelRepository {
         executorService.execute(() -> labelDao.deleteAllLabels());
     }
 
+    public void getLabelByName(String name, CallBack<Label> callBack) {
+        executorService.execute(() -> {
+            Label label = labelDao.getLabelByName(name);
+            callBack.onResult(label);
+        });
+    }
+
+    public void getLabelByID(long label_id, CallBack<Label> callBack) {
+        executorService.execute(() -> {
+            Label label = labelDao.getLabelByID(label_id);
+            callBack.onResult(label);
+        });
+    }
 }

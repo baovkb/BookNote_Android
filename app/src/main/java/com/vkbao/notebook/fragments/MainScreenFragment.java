@@ -1,5 +1,6 @@
 package com.vkbao.notebook.fragments;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -179,6 +180,7 @@ public class MainScreenFragment
         };
     }
 
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -217,6 +219,13 @@ public class MainScreenFragment
             }
             isHidden = !isHidden;
         } else if (id == addLabelBtn.getId() || id == addLabelTextView.getId()) {
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.main_screen_fragment, new MenuLabelFragment())
+                    .addToBackStack(null)
+                    .commit();
 
             setStateFAB(View.GONE);
             isHidden = true;

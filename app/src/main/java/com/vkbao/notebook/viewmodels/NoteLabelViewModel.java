@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.vkbao.notebook.helper.CallBack;
+import com.vkbao.notebook.models.Label;
 import com.vkbao.notebook.models.NoteLabel;
 import com.vkbao.notebook.respository.NoteLabelRepository;
 
@@ -35,5 +37,11 @@ public class NoteLabelViewModel extends AndroidViewModel {
     }
     public LiveData<List<NoteLabel>> getAllNoteLabel() {
         return allNoteLabel;
+    }
+    public void getLabelsByNoteID(long note_id, CallBack<List<Label>> callBack) {
+        noteLabelRepository.getLabelsByNoteID(note_id, callBack);
+    }
+    public void getNoteLabelByNoteID(long note_id, CallBack<List<NoteLabel>> callBack) {
+        noteLabelRepository.getNoteLabelByNoteID(note_id, callBack);
     }
 }

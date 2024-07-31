@@ -14,7 +14,7 @@ import java.util.List;
 @Dao
 public interface NoteDao {
     @Insert
-    void insert(Note...notes);
+    long[] insert(Note...notes);
 
     @Update
     void update(Note...notes);

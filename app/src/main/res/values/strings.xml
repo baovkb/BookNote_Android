@@ -6,9 +6,18 @@
     <string name="common_action_save">Save</string>
     <string name="common_action_edit">Edit</string>
     <string name="common_action_delete">Delete</string>
+    <string name="common_action_add">+Add</string>
+    <string name="common_action_ok">Ok</string>
 
     <string name="common_action_insert_img">Insert images</string>
     <string name="common_action_set_label">Set label</string>
+
+    <!--    Menu label-->
+    <string name="menu_label_header_add">Add label</string>
+    <string name="menu_label_header_edit">Edit label</string>
+    <string name="menu_label_list_labels">Labels list</string>
+    <string name="menu_label_input_hint">Enter label name</string>
+    <string name="menu_label_input_existed">Label existed</string>
 
     <!--   Menu-->
     <string name="menu_item_search">Search</string>

@@ -34,11 +34,11 @@ public interface NoteLabelDao {
             "WHERE Note.note_id = NoteLabel.note_id " +
             "AND Label.label_id = NoteLabel.label_id " +
             "AND Note.note_id = :note_id")
-    List<Label> getLabelsByNoteID(final long note_id);
+    List<NoteLabel> getNoteLabelByNoteID(final long note_id);
 
     @Query("SELECT * FROM Note, Label, NoteLabel " +
             "WHERE Note.note_id = NoteLabel.note_id " +
             "AND Label.label_id = NoteLabel.label_id " +
             "AND Label.label_id = :label_id")
-    List<Note> getNotesByLabelID(final long label_id);
+    List<NoteLabel> getNoteLabelByLabelID(final long label_id);
 }

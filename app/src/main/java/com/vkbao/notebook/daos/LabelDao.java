@@ -22,6 +22,12 @@ public interface LabelDao {
     @Delete
     void delete(Label...labels);
 
+    @Query("SELECT * FROM Label WHERE name = :name")
+    Label getLabelByName(String name);
+
+    @Query("SELECT * FROM Label WHERE label_id = :label_id")
+    Label getLabelByID(long label_id);
+
     @Query("DELETE FROM Label")
     void deleteAllLabels();
 

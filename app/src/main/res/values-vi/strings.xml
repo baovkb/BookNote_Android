@@ -6,9 +6,18 @@
     <string name="common_action_save">Lưu</string>
     <string name="common_action_edit">Sửa</string>
     <string name="common_action_delete">Xóa</string>
+    <string name="common_action_add">Thêm</string>
+    <string name="common_action_ok">Ok</string>
 
     <string name="common_action_insert_img">Chèn hình ảnh</string>
     <string name="common_action_set_label">Gắn nhãn</string>
+
+<!--    Menu label-->
+    <string name="menu_label_list_labels">Danh sách nhãn</string>
+    <string name="menu_label_input_hint">Nhập tên nhãn</string>
+    <string name="menu_label_input_existed">Nhãn đã tồn tại</string>
+    <string name="menu_label_header_add">Thêm nhãn</string>
+    <string name="menu_label_header_edit">Chỉnh sửa nhãn</string>
 
 <!--   Các Menu-->
     <string name="menu_item_search">Tìm kiếm</string>

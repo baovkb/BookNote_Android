@@ -5,10 +5,13 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuProvider;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,14 +19,21 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.vkbao.notebook.R;
 import com.vkbao.notebook.activities.MainActivity;
+import com.vkbao.notebook.adapters.AddNoteLabelAdapter;
+import com.vkbao.notebook.dialogs.NoteLabelDialogFragment;
+import com.vkbao.notebook.models.Label;
 import com.vkbao.notebook.models.Note;
 import com.vkbao.notebook.viewmodels.ImageViewModel;
 import com.vkbao.notebook.viewmodels.NoteLabelViewModel;
 import com.vkbao.notebook.viewmodels.NoteViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ViewNoteFragment extends Fragment {
     private NoteViewModel noteViewModel;
@@ -32,6 +42,9 @@ public class ViewNoteFragment extends Fragment {
     private NoteLabelViewModel noteLabelViewModel;
     private ImageViewModel imageViewModel;
     private Note note;
+    public List<Label> chosenLabel;
+    private AddNoteLabelAdapter viewNoteLabelAdapter;
+    private RecyclerView viewNoteLabelRecyclerView;
 
     public ViewNoteFragment() {
         // Required empty public constructor
@@ -40,10 +53,8 @@ public class ViewNoteFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            note = getArguments().getParcelable("note");
-        }
-
+        note = null;
+        chosenLabel = new ArrayList<>();
     }
 
     @Override
@@ -51,6 +62,11 @@ public class ViewNoteFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_note, container, false);
+
+        if (getArguments() != null) {
+            note = getArguments().getParcelable("note");
+            chosenLabel = getArguments().getParcelableArrayList("labels");
+        }
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.view_note_toolbar);
         ((MainActivity)getActivity()).setSupportActionBar(toolbar);
@@ -65,6 +81,14 @@ public class ViewNoteFragment extends Fragment {
         requireActivity().addMenuProvider(getMenuProvider(), getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         updateNoteLayout();
+
+        //set label feature
+        noteLabelViewModel = new ViewModelProvider(requireActivity()).get(NoteLabelViewModel.class);
+        viewNoteLabelAdapter = new AddNoteLabelAdapter();
+        viewNoteLabelRecyclerView = view.findViewById(R.id.view_note_label_list);
+        viewNoteLabelRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false));
+        viewNoteLabelRecyclerView.setAdapter(viewNoteLabelAdapter);
+        viewNoteLabelAdapter.setLabel(chosenLabel);
 
         return view;
     }
@@ -115,5 +139,4 @@ public class ViewNoteFragment extends Fragment {
     public void updateNoteData(Note newNote) {
         this.note = newNote;
     }
-
 }

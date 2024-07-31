@@ -1,6 +1,7 @@
 package com.vkbao.notebook.viewmodels;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -20,10 +21,11 @@ public class NoteViewModel extends AndroidViewModel {
         super(application);
         noteRepository = new NoteRepository(application);
         allNotes = noteRepository.getAllNotes();
+        Log.d("NoteViewModel", "note viewmodel constructor is called");
     }
 
-    public void insert(Note...notes) {
-        noteRepository.insert(notes);
+    public void insert(CallBack<long[]> callBack, Note...notes) {
+        noteRepository.insert(callBack, notes);
     }
     public void update(Note...notes) {
         noteRepository.update(notes);

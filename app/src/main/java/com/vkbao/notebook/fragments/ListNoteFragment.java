@@ -19,16 +19,23 @@ import com.vkbao.notebook.R;
 import com.vkbao.notebook.adapters.NoteAdapter;
 import com.vkbao.notebook.helper.CallBack;
 import com.vkbao.notebook.itemtouch.NoteItemTouch;
+import com.vkbao.notebook.models.Label;
 import com.vkbao.notebook.models.Note;
+import com.vkbao.notebook.models.NoteLabel;
+import com.vkbao.notebook.viewmodels.LabelViewModel;
+import com.vkbao.notebook.viewmodels.NoteLabelViewModel;
 import com.vkbao.notebook.viewmodels.NoteViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListNoteFragment extends Fragment {
-    private RecyclerView recyclerView;
+    private RecyclerView recyclerViewListNote;
     private ViewGroup emptyNoteViewGroup;
     private NoteAdapter noteAdapter;
     private NoteViewModel noteViewModel;
+    private LabelViewModel labelViewModel;
+    private NoteLabelViewModel noteLabelViewModel;
     private static final String TAG = "ListNoteFragment";
 
     public ListNoteFragment() {
@@ -45,10 +52,12 @@ public class ListNoteFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_list_note, container, false);
-        recyclerView = view.findViewById(R.id.recyclerView_note_list);
+        recyclerViewListNote = view.findViewById(R.id.recyclerView_note_list);
         emptyNoteViewGroup = view.findViewById(R.id.empty_note);
 
         noteViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
+        labelViewModel = new ViewModelProvider(requireActivity()).get(LabelViewModel.class);
+        noteLabelViewModel = new ViewModelProvider(requireActivity()).get(NoteLabelViewModel.class);
 
         noteAdapter = new NoteAdapter(new NoteAdapter.OnItemClickListener<Note>() {
             @Override
@@ -57,37 +66,43 @@ public class ListNoteFragment extends Fragment {
                 ViewNoteFragment viewNoteFragment = new ViewNoteFragment();
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("note", note);
-                viewNoteFragment.setArguments(bundle);
+//                get all label of note
+                noteLabelViewModel.getLabelsByNoteID(note.getNote_id(), (labelList) -> {
+                    ArrayList tmp = new ArrayList<>(labelList);
+                    bundle.putParcelableArrayList("labels", tmp);
+                    viewNoteFragment.setArguments(bundle);
 
-                fragmentManager
-                        .beginTransaction()
-                        .replace(R.id.main_screen_fragment, viewNoteFragment)
-                        .addToBackStack(null)
-                        .commit();
+                    fragmentManager
+                            .beginTransaction()
+                            .replace(R.id.main_screen_fragment, viewNoteFragment)
+                            .addToBackStack(null)
+                            .commit();
+                });
             }
         });
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(noteAdapter);
+        recyclerViewListNote.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerViewListNote.setAdapter(noteAdapter);
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new NoteItemTouch(
-                noteViewModel,
-                noteAdapter,
-                new NoteItemTouch.OnItemSwipe<Note>() {
-                    @Override
-                    public void onSwipe(Note note) {
-                        noteViewModel.delete(note);
-                    }
-                }));
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+        NoteItemTouch noteItemTouch = new NoteItemTouch(noteViewModel, noteLabelViewModel, noteAdapter);
+        noteItemTouch.setOnSwipeListener(new NoteItemTouch.OnItemSwipe<Note, NoteLabel>() {
+            @Override
+            public void onSwipe(Note note, List<NoteLabel> noteLabels) {
+                NoteLabel[] noteLabelArray = noteLabels.toArray(new NoteLabel[0]);
+                noteLabelViewModel.delete(noteLabelArray);
+                noteViewModel.delete(note);
+            }
+        });
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(noteItemTouch);
+        itemTouchHelper.attachToRecyclerView(recyclerViewListNote);
 
         noteViewModel.getAllNotes().observe(getViewLifecycleOwner(), new Observer<List<Note>>() {
             @Override
             public void onChanged(List<Note> notes) {
                 if (notes.isEmpty()) {
-                    recyclerView.setVisibility(View.GONE);
+                    recyclerViewListNote.setVisibility(View.GONE);
                     emptyNoteViewGroup.setVisibility(View.VISIBLE);
                 } else {
-                    recyclerView.setVisibility(View.VISIBLE);
+                    recyclerViewListNote.setVisibility(View.VISIBLE);
                     emptyNoteViewGroup.setVisibility(View.GONE);
                     noteAdapter.setNotes(notes);
                 }
