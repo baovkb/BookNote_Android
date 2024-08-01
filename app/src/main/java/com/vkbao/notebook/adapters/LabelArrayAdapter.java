@@ -36,7 +36,6 @@ public class LabelArrayAdapter extends ArrayAdapter<Label> {
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                Log.d("test", "check is change: " + checkBox.isChecked());
                 if (checkBox.isChecked() && !checkedLabelList.contains(labelItem)) {
                     checkedLabelList.add(labelItem);
                 } else if (!checkBox.isChecked() && checkedLabelList.contains(labelItem)) {

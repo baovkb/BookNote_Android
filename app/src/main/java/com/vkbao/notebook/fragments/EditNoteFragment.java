@@ -3,6 +3,7 @@ package com.vkbao.notebook.fragments;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.DialogFragment;
@@ -63,6 +64,13 @@ public class EditNoteFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_edit_note, container, false);
 
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         if (getArguments() != null) {
             note = getArguments().getParcelable("note");
             chosenLabels = getArguments().getParcelableArrayList("labels") != null ? getArguments().getParcelableArrayList("labels") : new ArrayList<>();
@@ -94,8 +102,6 @@ public class EditNoteFragment extends Fragment implements View.OnClickListener {
         editNoteLabelBtn = view.findViewById(R.id.edit_note_label_add_btn);
         editNoteLabelBtn.setOnClickListener(this);
         editNoteLabelAdapter.setLabel(chosenLabels);
-
-        return view;
     }
 
     //Handle Action Menu
@@ -155,6 +161,7 @@ public class EditNoteFragment extends Fragment implements View.OnClickListener {
                         });
                         noteViewModel.delete(note);
 
+                        //return to list note fragment
                         fragmentManager.popBackStackImmediate();
                         fragmentManager.popBackStackImmediate();
                     }

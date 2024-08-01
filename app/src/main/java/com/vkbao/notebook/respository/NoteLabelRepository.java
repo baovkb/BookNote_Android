@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.vkbao.notebook.daos.LabelDao;
 import com.vkbao.notebook.daos.NoteDao;
@@ -97,6 +98,25 @@ public class NoteLabelRepository {
             } else {
                 new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(new ArrayList<>()));
             }
+        });
+    }
+
+    public void getNotesByLabelName(String label_name, CallBack<List<Note>> callBack) {
+        executorService.execute(() -> {
+            List<Note> noteList = noteLabelDao.getNotesByLabelName(label_name);
+            if (noteList != null) {
+                new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(noteList));
+            } else {
+                new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(new ArrayList<>()));
+            }
+        });
+    }
+
+    public void getNotesLiveDataByLabelName(String label_name, CallBack<LiveData<List<Note>>> callBack) {
+        executorService.execute(() -> {
+            LiveData<List<Note>> noteListLiveData = noteLabelDao.getNotesLiveDataByLabelName(label_name);
+
+            new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(noteListLiveData));
         });
     }
 }

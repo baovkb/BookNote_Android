@@ -49,4 +49,16 @@ public interface NoteLabelDao {
             "AND Label.label_id = NoteLabel.label_id " +
             "AND Label.label_id = :label_id")
     List<Note> getNotesByLabelID(long label_id);
+
+    @Query("SELECT Note.* FROM Note, NoteLabel, Label " +
+            "WHERE Note.note_id = NoteLabel.note_id " +
+            "AND Label.label_id = NoteLabel.label_id " +
+            "AND Label.name = :label_name")
+    List<Note> getNotesByLabelName(String label_name);
+
+    @Query("SELECT Note.* FROM Note, NoteLabel, Label " +
+            "WHERE Note.note_id = NoteLabel.note_id " +
+            "AND Label.label_id = NoteLabel.label_id " +
+            "AND Label.name = :label_name")
+    LiveData<List<Note>> getNotesLiveDataByLabelName(String label_name);
 }

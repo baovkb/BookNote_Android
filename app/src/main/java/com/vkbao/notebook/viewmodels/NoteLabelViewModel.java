@@ -1,10 +1,12 @@
 package com.vkbao.notebook.viewmodels;
 
 import android.app.Application;
+import android.telecom.Call;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.vkbao.notebook.helper.CallBack;
 import com.vkbao.notebook.models.Label;
@@ -58,5 +60,13 @@ public class NoteLabelViewModel extends AndroidViewModel {
 
     public void getNoteLabelByLabelID(long label_id, CallBack<List<NoteLabel>> callBack) {
         noteLabelRepository.getNoteLabelByLabelID(label_id, callBack);
+    }
+
+    public void getNotesByLabelName(String label_name, CallBack<List<Note>> callBack) {
+        noteLabelRepository.getNotesByLabelName(label_name, callBack);
+    }
+
+    public void getNotesLiveDataByLabelName(String label_name, CallBack<LiveData<List<Note>>> callBack) {
+        noteLabelRepository.getNotesLiveDataByLabelName(label_name, callBack);
     }
 }

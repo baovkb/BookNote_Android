@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -36,7 +37,9 @@ public class ListNoteFragment extends Fragment {
     private NoteViewModel noteViewModel;
     private LabelViewModel labelViewModel;
     private NoteLabelViewModel noteLabelViewModel;
+    private String fragmentTabName;
     private static final String TAG = "ListNoteFragment";
+
 
     public ListNoteFragment() {
         // Required empty public constructor
@@ -52,6 +55,20 @@ public class ListNoteFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_list_note, container, false);
+
+        return view;
+    }
+
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if (getArguments() != null) {
+            Bundle bundle = getArguments();
+            fragmentTabName = bundle.getString("tab_name") != null ? bundle.getString("tab_name") : "";
+        } else {
+            fragmentTabName = "";
+        }
+
         recyclerViewListNote = view.findViewById(R.id.recyclerView_note_list);
         emptyNoteViewGroup = view.findViewById(R.id.empty_note);
 
@@ -76,7 +93,7 @@ public class ListNoteFragment extends Fragment {
                         .replace(R.id.main_screen_fragment, viewNoteFragment)
                         .addToBackStack(null)
                         .commit();
-                });
+            });
         });
         recyclerViewListNote.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewListNote.setAdapter(noteAdapter);
@@ -90,22 +107,34 @@ public class ListNoteFragment extends Fragment {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(noteItemTouch);
         itemTouchHelper.attachToRecyclerView(recyclerViewListNote);
 
-        noteViewModel.getAllNotes().observe(getViewLifecycleOwner(), new Observer<List<Note>>() {
-            @Override
-            public void onChanged(List<Note> notes) {
-                if (notes.isEmpty()) {
-                    recyclerViewListNote.setVisibility(View.GONE);
-                    emptyNoteViewGroup.setVisibility(View.VISIBLE);
-                } else {
-                    recyclerViewListNote.setVisibility(View.VISIBLE);
-                    emptyNoteViewGroup.setVisibility(View.GONE);
-                    noteAdapter.setNotes(notes);
-                }
+        //get note by label
+        if (!fragmentTabName.equals("")) {
+            //get all note for tab-all
+            if (fragmentTabName.equals(getString(R.string.tab_name_all))) {
+                noteViewModel.getAllNotes().observe(getViewLifecycleOwner(), noteList -> {
+                    updateLayout(noteList);
+                });
+            } else {
+                //get note for tab-label
+                noteLabelViewModel.getNotesLiveDataByLabelName(fragmentTabName, (noteListLiveData) -> {
+                    if (getView() != null) {
+                        noteListLiveData.observe(getViewLifecycleOwner(), noteList -> {
+                            updateLayout(noteList);
+                        });
+                    }
+                });
             }
-        });
-
-        return view;
+        }
     }
 
-
+    public void updateLayout(List<Note> noteList) {
+        if (noteList.isEmpty()) {
+            recyclerViewListNote.setVisibility(View.GONE);
+            emptyNoteViewGroup.setVisibility(View.VISIBLE);
+        } else {
+            recyclerViewListNote.setVisibility(View.VISIBLE);
+            emptyNoteViewGroup.setVisibility(View.GONE);
+            noteAdapter.setNotes(noteList);
+        }
+    }
 }

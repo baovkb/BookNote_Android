@@ -3,6 +3,7 @@ package com.vkbao.notebook.fragments;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.DialogFragment;
@@ -73,6 +74,13 @@ public class AddNoteFragment extends Fragment
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_note, container, false);
 
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.add_note_toolbar);
         ((MainActivity)getActivity()).setSupportActionBar(toolbar);
         ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -93,8 +101,6 @@ public class AddNoteFragment extends Fragment
 
         requireActivity().addMenuProvider(getMenuProvider(), getViewLifecycleOwner(), Lifecycle.State.RESUMED);
         addNoteLabelAddBtn.setOnClickListener(this);
-
-        return view;
     }
 
     private MenuProvider getMenuProvider() {

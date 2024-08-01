@@ -1,11 +1,14 @@
 package com.vkbao.notebook.fragments;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -14,8 +17,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.room.Database;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,16 +28,25 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.vkbao.notebook.activities.ContactActivity;
 import com.vkbao.notebook.activities.MainActivity;
 import com.vkbao.notebook.R;
+import com.vkbao.notebook.adapters.ViewPagerAdapter;
+import com.vkbao.notebook.models.Label;
 import com.vkbao.notebook.respository.NoteRepository;
+import com.vkbao.notebook.viewmodels.LabelViewModel;
 import com.vkbao.notebook.viewmodels.NoteViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainScreenFragment
         extends Fragment
@@ -49,6 +63,12 @@ public class MainScreenFragment
     private ActionBarDrawerToggle actionBarToggle;
     private NavigationView navigationView;
 
+    private TabLayout tabLayout;
+    private ViewPager2 viewPager;
+    private ViewPagerAdapter viewPagerAdapter;
+
+    private LabelViewModel labelViewModel;
+
     public MainScreenFragment() {
     }
 
@@ -61,9 +81,15 @@ public class MainScreenFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main_screen, container, false);
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.main_screen_toolbar);
         ((MainActivity)getActivity()).setSupportActionBar(toolbar);
@@ -98,49 +124,75 @@ public class MainScreenFragment
 
         getActivity().addMenuProvider(getMenuProvider(), getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
-//        Display fragment
-        FragmentManager fragmentManager = getChildFragmentManager();
         //        Portrait mode
-        if (view.findViewById(R.id.note_fragment) != null) {
-            if (savedInstanceState != null) {
-                fragmentManager.executePendingTransactions();
-                Fragment note_fragment = fragmentManager.findFragmentById(R.id.note_fragment);
-                if (note_fragment != null) {
-                    fragmentManager.beginTransaction().remove(note_fragment).commit();
+//        if (view.findViewById(R.id.note_fragment) != null) {
+//            if (savedInstanceState != null) {
+//                fragmentManager.executePendingTransactions();
+//                Fragment note_fragment = fragmentManager.findFragmentById(R.id.note_fragment);
+//                if (note_fragment != null) {
+//                    fragmentManager.beginTransaction().remove(note_fragment).commit();
+//                }
+//            }
+//            fragmentManager.beginTransaction().add(R.id.note_fragment, new ListNoteFragment()).commit();
+//
+//        } else {
+////            Landscape mode
+//            if (savedInstanceState != null) {
+//                fragmentManager.executePendingTransactions();
+//
+//                //remove note list fragment
+//                Fragment noteListFragment = fragmentManager.findFragmentById(R.id.note_list_fragment);
+//                if (noteListFragment != null) {
+//                    fragmentManager.beginTransaction().remove(noteListFragment).commit();
+//                }
+//
+//                //remove note detail fragment
+//                Fragment noteDetailFragment = fragmentManager.findFragmentById(R.id.note_detail_fragment);
+//                if (noteDetailFragment != null) {
+//                    fragmentManager.beginTransaction().remove(noteDetailFragment).commit();
+//                }
+//            }
+//            //add child fragment to this fragment
+//            fragmentManager.beginTransaction().add(R.id.note_list_fragment, new ListNoteFragment()).commit();
+//        }
+
+        tabLayout = view.findViewById(R.id.main_screen_tablayout);
+        viewPager = view.findViewById(R.id.main_screen_viewpage);
+        viewPagerAdapter = new ViewPagerAdapter(requireContext(),this);
+        viewPager.setAdapter(viewPagerAdapter);
+
+        labelViewModel = new ViewModelProvider(requireActivity()).get(LabelViewModel.class);
+        labelViewModel.getAllLabel().observe(getViewLifecycleOwner(), new Observer<List<Label>>() {
+            @Override
+            public void onChanged(List<Label> labelList) {
+                List<Fragment> fragmentList = new ArrayList<>();
+                //label tabs
+                for(Label label: labelList) {
+                    Bundle tmpBundle = new Bundle();
+                    tmpBundle.putString("tab_name", label.getName());
+                    ListNoteFragment labelTabFragment = new ListNoteFragment();
+                    labelTabFragment.setArguments(tmpBundle);
+                    fragmentList.add(labelTabFragment);
                 }
+
+                viewPagerAdapter.setFragmentList(fragmentList);
             }
-            fragmentManager.beginTransaction().add(R.id.note_fragment, new ListNoteFragment()).commit();
+        });
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab, position) -> tab.setText(viewPagerAdapter.getTabName(position))
+        ).attach();
 
-        } else {
-//            Landscape mode
-            if (savedInstanceState != null) {
-                fragmentManager.executePendingTransactions();
-
-                //remove note list fragment
-                Fragment noteListFragment = fragmentManager.findFragmentById(R.id.note_list_fragment);
-                if (noteListFragment != null) {
-                    fragmentManager.beginTransaction().remove(noteListFragment).commit();
-                }
-
-                //remove note detail fragment
-                Fragment noteDetailFragment = fragmentManager.findFragmentById(R.id.note_detail_fragment);
-                if (noteDetailFragment != null) {
-                    fragmentManager.beginTransaction().remove(noteDetailFragment).commit();
-                }
-            }
-            //add child fragment to this fragment
-            fragmentManager.beginTransaction().add(R.id.note_list_fragment, new ListNoteFragment()).commit();
+        if (savedInstanceState != null) {
+            int currentTabIndex = savedInstanceState.getInt("CURRENT_TAB_INDEX", 0); // Mặc định là tab 0
+            viewPager.setCurrentItem(currentTabIndex, false);
         }
-
-        return view;
     }
 
-    //    @Override
-//    protected void onPostCreate(Bundle savedInstanceState) {
-//        super.onPostCreate(savedInstanceState);
-//        // Sync the toggle state after onRestoreInstanceState has occurred.
-//        actionBarToggle.syncState();
-//    }
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("CURRENT_TAB_INDEX", tabLayout.getSelectedTabPosition());
+    }
 
     private MenuProvider getMenuProvider() {
         return new MenuProvider() {

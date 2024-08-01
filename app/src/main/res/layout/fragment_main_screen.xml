@@ -29,6 +29,29 @@
                 app:popupTheme="@style/Theme.NoteBook"
                 app:titleTextColor="@color/white" />
 
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/main_screen_tablayout"
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:elevation="4dp"
+                app:tabMode="scrollable"
+                android:background="@color/colorPrimary"
+                app:tabIndicatorColor="@android:color/white"
+                app:tabSelectedTextColor="@android:color/white"
+                app:tabTextColor="@android:color/white"
+                app:layout_constraintTop_toBottomOf="@+id/main_screen_toolbar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/main_screen_viewpage"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toBottomOf="@+id/main_screen_tablayout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
             <!--        List note fragment-->
             <FrameLayout
                 android:id="@+id/note_fragment"
@@ -36,7 +59,7 @@
                 android:layout_height="0dp"
                 app:layout_constraintHeight_default="spread"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/main_screen_toolbar"
+                app:layout_constraintTop_toBottomOf="@+id/main_screen_tablayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">
             </FrameLayout>

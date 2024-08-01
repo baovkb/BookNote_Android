@@ -21,7 +21,6 @@ public class NoteViewModel extends AndroidViewModel {
         super(application);
         noteRepository = new NoteRepository(application);
         allNotes = noteRepository.getAllNotes();
-        Log.d("NoteViewModel", "note viewmodel constructor is called");
     }
 
     public void insert(CallBack<long[]> callBack, Note...notes) {

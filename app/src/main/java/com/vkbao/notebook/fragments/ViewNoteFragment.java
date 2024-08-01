@@ -3,12 +3,14 @@ package com.vkbao.notebook.fragments;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,6 +64,13 @@ public class ViewNoteFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_note, container, false);
 
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         if (getArguments() != null) {
             note = getArguments().getParcelable("note");
             chosenLabel = getArguments().getParcelableArrayList("labels") != null ? getArguments().getParcelableArrayList("labels") : new ArrayList<>();
@@ -88,8 +97,6 @@ public class ViewNoteFragment extends Fragment {
         viewNoteLabelAdapter.setLabel(chosenLabel);
 
         updateNoteLayout();
-
-        return view;
     }
 
     private MenuProvider getMenuProvider() {
