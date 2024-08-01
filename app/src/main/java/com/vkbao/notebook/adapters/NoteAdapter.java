@@ -25,8 +25,12 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NotesViewHolde
     private List<Note> notes;
     OnItemClickListener listener;
 
-    public NoteAdapter(OnItemClickListener<Note> listener) {
+    public NoteAdapter() {
         this.notes = new ArrayList<>();
+        this.listener = null;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener<Note> listener) {
         this.listener = listener;
     }
 
@@ -46,7 +50,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NotesViewHolde
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.onClick(notes.get(holder.getAdapterPosition()));
+                if (listener != null) {
+                    listener.onClick(notes.get(holder.getAdapterPosition()));
+                }
             }
         });
     }

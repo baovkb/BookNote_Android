@@ -28,6 +28,7 @@ import com.vkbao.notebook.adapters.AddNoteLabelAdapter;
 import com.vkbao.notebook.dialogs.NoteLabelDialogFragment;
 import com.vkbao.notebook.models.Label;
 import com.vkbao.notebook.models.Note;
+import com.vkbao.notebook.models.NoteLabel;
 import com.vkbao.notebook.viewmodels.ImageViewModel;
 import com.vkbao.notebook.viewmodels.NoteLabelViewModel;
 import com.vkbao.notebook.viewmodels.NoteViewModel;
@@ -42,7 +43,7 @@ public class ViewNoteFragment extends Fragment {
     private NoteLabelViewModel noteLabelViewModel;
     private ImageViewModel imageViewModel;
     private Note note;
-    public List<Label> chosenLabel;
+    private List<Label> chosenLabel;
     private AddNoteLabelAdapter viewNoteLabelAdapter;
     private RecyclerView viewNoteLabelRecyclerView;
 
@@ -53,8 +54,6 @@ public class ViewNoteFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        note = null;
-        chosenLabel = new ArrayList<>();
     }
 
     @Override
@@ -65,7 +64,7 @@ public class ViewNoteFragment extends Fragment {
 
         if (getArguments() != null) {
             note = getArguments().getParcelable("note");
-            chosenLabel = getArguments().getParcelableArrayList("labels");
+            chosenLabel = getArguments().getParcelableArrayList("labels") != null ? getArguments().getParcelableArrayList("labels") : new ArrayList<>();
         }
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.view_note_toolbar);
@@ -80,8 +79,6 @@ public class ViewNoteFragment extends Fragment {
 
         requireActivity().addMenuProvider(getMenuProvider(), getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
-        updateNoteLayout();
-
         //set label feature
         noteLabelViewModel = new ViewModelProvider(requireActivity()).get(NoteLabelViewModel.class);
         viewNoteLabelAdapter = new AddNoteLabelAdapter();
@@ -89,6 +86,8 @@ public class ViewNoteFragment extends Fragment {
         viewNoteLabelRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false));
         viewNoteLabelRecyclerView.setAdapter(viewNoteLabelAdapter);
         viewNoteLabelAdapter.setLabel(chosenLabel);
+
+        updateNoteLayout();
 
         return view;
     }
@@ -111,6 +110,7 @@ public class ViewNoteFragment extends Fragment {
                     if (note != null) {
                         Bundle bundle = new Bundle();
                         bundle.putParcelable("note", note);
+                        bundle.putParcelableArrayList("labels", new ArrayList<>(chosenLabel));
                         EditNoteFragment editNoteFragment = new EditNoteFragment();
                         editNoteFragment.setArguments(bundle);
                         fragmentManager
@@ -121,6 +121,10 @@ public class ViewNoteFragment extends Fragment {
                     }
 
                 } else if (id == R.id.delete_note) {
+                    noteLabelViewModel.getNoteLabelByNoteID(note.getNote_id(), (noteLabelsResult) -> {
+                        NoteLabel[] noteLabelArray = noteLabelsResult.toArray(noteLabelsResult.toArray(new NoteLabel[0]));
+                        noteLabelViewModel.delete(noteLabelArray);
+                    });
                     noteViewModel.delete(note);
                     fragmentManager.popBackStack();
                 }
@@ -134,9 +138,14 @@ public class ViewNoteFragment extends Fragment {
             noteTitle.setText(note.getTitle());
             noteDescription.setText(note.getDescription());
         }
+        if (chosenLabel != null) {
+            viewNoteLabelAdapter.notifyDataSetChanged();
+        }
     }
 
-    public void updateNoteData(Note newNote) {
+    public void updateNoteData(Note newNote, List<Label> newLabels) {
         this.note = newNote;
+        this.chosenLabel.clear();
+        this.chosenLabel.addAll(newLabels);
     }
 }

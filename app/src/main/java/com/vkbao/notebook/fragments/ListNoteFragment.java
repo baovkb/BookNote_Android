@@ -59,38 +59,33 @@ public class ListNoteFragment extends Fragment {
         labelViewModel = new ViewModelProvider(requireActivity()).get(LabelViewModel.class);
         noteLabelViewModel = new ViewModelProvider(requireActivity()).get(NoteLabelViewModel.class);
 
-        noteAdapter = new NoteAdapter(new NoteAdapter.OnItemClickListener<Note>() {
-            @Override
-            public void onClick(Note note) {
-                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                ViewNoteFragment viewNoteFragment = new ViewNoteFragment();
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("note", note);
-//                get all label of note
-                noteLabelViewModel.getLabelsByNoteID(note.getNote_id(), (labelList) -> {
-                    ArrayList tmp = new ArrayList<>(labelList);
-                    bundle.putParcelableArrayList("labels", tmp);
-                    viewNoteFragment.setArguments(bundle);
+        noteAdapter = new NoteAdapter();
+        noteAdapter.setOnItemClickListener(note -> {
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            ViewNoteFragment viewNoteFragment = new ViewNoteFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("note", note);
+//          get all label of note
+            noteLabelViewModel.getLabelsByNoteID(note.getNote_id(), (labelList) -> {
+                ArrayList tmp = new ArrayList<>(labelList);
+                bundle.putParcelableArrayList("labels", tmp);
+                viewNoteFragment.setArguments(bundle);
 
-                    fragmentManager
-                            .beginTransaction()
-                            .replace(R.id.main_screen_fragment, viewNoteFragment)
-                            .addToBackStack(null)
-                            .commit();
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.main_screen_fragment, viewNoteFragment)
+                        .addToBackStack(null)
+                        .commit();
                 });
-            }
         });
         recyclerViewListNote.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewListNote.setAdapter(noteAdapter);
 
         NoteItemTouch noteItemTouch = new NoteItemTouch(noteViewModel, noteLabelViewModel, noteAdapter);
-        noteItemTouch.setOnSwipeListener(new NoteItemTouch.OnItemSwipe<Note, NoteLabel>() {
-            @Override
-            public void onSwipe(Note note, List<NoteLabel> noteLabels) {
-                NoteLabel[] noteLabelArray = noteLabels.toArray(new NoteLabel[0]);
-                noteLabelViewModel.delete(noteLabelArray);
-                noteViewModel.delete(note);
-            }
+        noteItemTouch.setOnSwipeListener((note, noteLabelList) -> {
+            NoteLabel[] noteLabelArray = noteLabelList.toArray(new NoteLabel[0]);
+            noteLabelViewModel.delete(noteLabelArray);
+            noteViewModel.delete(note);
         });
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(noteItemTouch);
         itemTouchHelper.attachToRecyclerView(recyclerViewListNote);

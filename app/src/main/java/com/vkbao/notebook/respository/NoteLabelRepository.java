@@ -1,6 +1,8 @@
 package com.vkbao.notebook.respository;
 
 import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.lifecycle.LiveData;
 
@@ -55,15 +57,23 @@ public class NoteLabelRepository {
 
     public void getLabelsByNoteID(long note_id, CallBack<List<Label>> callBack) {
         executorService.execute(() -> {
-            List<NoteLabel> noteLabelList = noteLabelDao.getNoteLabelByNoteID(note_id);
-            List<Label> labelList = new ArrayList<>();
-            for (NoteLabel fNoteLabel: noteLabelList) {
-                Label findedLabel = labelDao.getLabelByID(fNoteLabel.getLabel_id());
-                if (findedLabel != null) {
-                    labelList.add(findedLabel);
-                }
+            List<Label> labelList = noteLabelDao.getLabelsByNoteID(note_id);
+            if (labelList != null) {
+                new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(labelList));
+            } else {
+                new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(new ArrayList<>()));
             }
-            callBack.onResult(labelList);
+        });
+    }
+
+    public void getNotesByLabelID(long label_id, CallBack<List<Note>> callBack) {
+        executorService.execute(() -> {
+            List<Note> noteList = noteLabelDao.getNotesByLabelID(label_id);
+            if (noteList != null) {
+                new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(noteList));
+            } else {
+                new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(new ArrayList<>()));
+            }
         });
     }
 
@@ -71,11 +81,22 @@ public class NoteLabelRepository {
         executorService.execute(() -> {
             List<NoteLabel> res = noteLabelDao.getNoteLabelByNoteID(note_id);
             if (res != null) {
-                callBack.onResult(res);
+                new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(res));
             } else {
-                callBack.onResult(new ArrayList<>());
+                new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(new ArrayList<>()));
             }
 
+        });
+    }
+
+    public void getNoteLabelByLabelID(long label_id, CallBack<List<NoteLabel>> callBack) {
+        executorService.execute(() -> {
+            List<NoteLabel> res = noteLabelDao.getNoteLabelByLabelID(label_id);
+            if (res != null) {
+                new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(res));
+            } else {
+                new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(new ArrayList<>()));
+            }
         });
     }
 }
