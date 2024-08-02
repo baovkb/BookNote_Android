@@ -34,9 +34,7 @@ Compatibility: Android 13 and above
 
 <h3> Some screenshot </h3>
 
-![main_screen](Screenshot/main_screen.png)
-![note_detail](Screenshot/note_detail.png)
-![manage_labels](Screenshot/manage_labels.png)
-![choose_label_for_note](Screenshot/choose_label_for_note.png)
+![main_screen](Screenshot/img_1.png)
+![main_screen](Screenshot/img_2.png) 
 
 
