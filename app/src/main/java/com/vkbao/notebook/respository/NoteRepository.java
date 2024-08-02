@@ -62,4 +62,13 @@ public class NoteRepository {
             new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(note));
         });
     }
+
+    public void searchNote(String keyword, CallBack<List<Note>> callBack) {
+        executorService.execute(() -> {
+            List<Note> noteListLiveData = noteDao.searchNote(keyword);
+            new Handler(Looper.getMainLooper()).post(() -> {
+                callBack.onResult(noteListLiveData);
+            });
+        });
+    }
 }

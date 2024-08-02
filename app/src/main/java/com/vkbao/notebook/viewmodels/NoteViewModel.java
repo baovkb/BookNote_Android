@@ -1,6 +1,7 @@
 package com.vkbao.notebook.viewmodels;
 
 import android.app.Application;
+import android.telecom.Call;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -29,20 +30,28 @@ public class NoteViewModel extends AndroidViewModel {
     public void update(Note...notes) {
         noteRepository.update(notes);
     }
+
     public void delete(Note...notes) {
         noteRepository.delete(notes);
     }
+
     public void deleteByID(long note_id) {
         noteRepository.deleteByID(note_id);
     }
+
     public void getNoteByID(long note_id, CallBack<Note> callBack){
         noteRepository.getNoteByID(note_id, callBack);
     }
+
     public void deleteAll() {
         noteRepository.deleteAll();
     }
+
     public LiveData<List<Note>> getAllNotes() {
         return allNotes;
     }
 
+    public void searchNote(String keyword, CallBack<List<Note>> callBack) {
+        noteRepository.searchNote(keyword, callBack);
+    }
 }

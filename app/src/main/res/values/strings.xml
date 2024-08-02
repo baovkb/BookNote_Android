@@ -9,8 +9,12 @@
     <string name="common_action_add">+Add</string>
     <string name="common_action_ok">Ok</string>
 
-<!--    Tab name-->
+    <!--    Tab name-->
     <string name="tab_name_all">All</string>
+
+<!--    Search note-->
+    <string name="search_note_title">Search note</string>
+    <string name="search_note_hint">Search your note</string>
 
     <string name="common_action_insert_img">Insert images</string>
     <string name="common_action_set_label">Set label</string>

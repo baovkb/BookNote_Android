@@ -209,7 +209,11 @@ public class MainScreenFragment
                 }
 
                 if (itemId == R.id.search) {
-                    Toast.makeText(getActivity(), "Search button selected", Toast.LENGTH_SHORT).show();
+                    getParentFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.main_screen_fragment, new SearchNoteFragment())
+                            .addToBackStack(null)
+                            .commit();
                     return true;
                 } else if (itemId == R.id.about) {
                     Intent intent = new Intent(getActivity(), ContactActivity.class);

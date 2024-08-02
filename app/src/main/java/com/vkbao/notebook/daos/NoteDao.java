@@ -33,4 +33,9 @@ public interface NoteDao {
 
     @Query("SELECT * FROM Note WHERE note_id=:note_id")
     Note getNoteByID(final long note_id);
+
+    @Query("SELECT * FROM Note " +
+            "WHERE title LIKE '%' || :keyword || '%' " +
+            "OR description LIKE '%' || :keyword || '%'")
+    List<Note> searchNote(String keyword);
 }

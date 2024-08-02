@@ -15,6 +15,10 @@
     <!--    Tab name-->
     <string name="tab_name_all">Tất cả</string>
 
+    <!--    Search note-->
+    <string name="search_note_title">Tìm kiếm ghi chú</string>
+    <string name="search_note_hint">Tìm kiếm ghi chú</string>
+
 <!--    Menu label-->
     <string name="menu_label_list_labels">Danh sách nhãn</string>
     <string name="menu_label_input_hint">Nhập tên nhãn</string>

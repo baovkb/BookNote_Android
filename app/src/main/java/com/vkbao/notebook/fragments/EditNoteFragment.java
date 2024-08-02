@@ -80,6 +80,7 @@ public class EditNoteFragment extends Fragment implements View.OnClickListener {
         ((MainActivity)getActivity()).setSupportActionBar(toolbar);
         ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((MainActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        requireActivity().addMenuProvider(getMenuProvider(), getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         noteViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
         noteLabelViewModel = new ViewModelProvider(requireActivity()).get(NoteLabelViewModel.class);
@@ -90,8 +91,6 @@ public class EditNoteFragment extends Fragment implements View.OnClickListener {
             noteTitle.setText(note.getTitle());
             noteDescription.setText(note.getDescription());
         }
-
-        requireActivity().addMenuProvider(getMenuProvider(), getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
 //        Label feature
         editNoteLabelRecyclerView = view.findViewById(R.id.edit_note_label_list);
