@@ -2,7 +2,7 @@
 <h2> About this project</h2>
 <h3> Project overview</h3>
 
-This project is built to provide a solution to replace traditional paper note. No need to carry bulky notebook, just aa Android smartphone can take notes important anytime, anywhere, without internet connection. This app is designed based on MVVM (Model View ViewModel) pattern.
+This project is built to provide a solution to replace traditional paper note. No need to carry bulky notebook, just aa Android smartphone can take notes important anytime, anywhere, without internet connection. This app is designed based on MVVM (Model View ViewModel) model.
 
 Compatibility: Android 13 and above
 
