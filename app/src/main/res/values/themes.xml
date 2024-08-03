@@ -32,6 +32,12 @@
         <item name="android:paddingBottom">6dp</item>
     </style>
 
+    <style name="delete_img_icon">
+        <item name="backgroundTint">@color/colorPrimary</item>
+        <item name="android:paddingVertical">6dp</item>
+        <item name="android:paddingHorizontal">6dp</item>
+    </style>
+
     <declare-styleable name="item_note_id_row">
         <attr name="note_id" format="integer"></attr>
     </declare-styleable>
