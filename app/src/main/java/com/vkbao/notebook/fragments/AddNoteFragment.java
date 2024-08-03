@@ -1,10 +1,23 @@
 package com.vkbao.notebook.fragments;
 
+import static android.app.Activity.RESULT_OK;
+
+import static com.vkbao.notebook.helper.Helper.insertImgToEditTextView;
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.ClipData;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -18,15 +31,28 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Parcelable;
+import android.provider.MediaStore;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ImageSpan;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.vkbao.notebook.R;
@@ -34,6 +60,9 @@ import com.vkbao.notebook.activities.MainActivity;
 import com.vkbao.notebook.adapters.AddNoteLabelAdapter;
 import com.vkbao.notebook.dialogs.NoteLabelDialogFragment;
 import com.vkbao.notebook.helper.CallBack;
+import com.vkbao.notebook.helper.CustomClickableSpan;
+import com.vkbao.notebook.helper.CustomImageSpan;
+import com.vkbao.notebook.helper.Helper;
 import com.vkbao.notebook.helper.TimeConvertor;
 import com.vkbao.notebook.models.Label;
 import com.vkbao.notebook.models.Note;
@@ -44,8 +73,12 @@ import com.vkbao.notebook.viewmodels.LabelViewModel;
 import com.vkbao.notebook.viewmodels.NoteLabelViewModel;
 import com.vkbao.notebook.viewmodels.NoteViewModel;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class AddNoteFragment extends Fragment
         implements View.OnClickListener{
@@ -58,7 +91,10 @@ public class AddNoteFragment extends Fragment
     private ImageViewModel imageViewModel;
     private AddNoteLabelAdapter addNoteLabelAdapter;
     private RecyclerView addNoteLabelRecyclerView;
-    public List<Label> tmpChosenLabel;
+    private List<Label> tmpChosenLabel;
+    private ImageButton insertImgBtn;
+
+    private final int REQUEST_GALLERY_CODE = 1;
 
     public AddNoteFragment() {
         // Required empty public constructor
@@ -80,7 +116,11 @@ public class AddNoteFragment extends Fragment
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        init(view);
+        setUpEvent();
+    }
 
+    public void init(View view) {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.add_note_toolbar);
         ((MainActivity)getActivity()).setSupportActionBar(toolbar);
         ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -92,15 +132,35 @@ public class AddNoteFragment extends Fragment
 
         noteTitle = view.findViewById(R.id.add_note_title_text_input_field);
         noteDescription = view.findViewById(R.id.add_note_description_text_input_field);
+        noteDescription.setMovementMethod(LinkMovementMethod.getInstance());
         addNoteLabelAddBtn = view.findViewById(R.id.add_note_label_add_btn);
         addNoteLabelRecyclerView = view.findViewById(R.id.add_note_label_list);
         addNoteLabelAdapter = new AddNoteLabelAdapter();
+        insertImgBtn = view.findViewById(R.id.add_note_insert_img_btn);
 
         addNoteLabelRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false));
         addNoteLabelRecyclerView.setAdapter(addNoteLabelAdapter);
 
         requireActivity().addMenuProvider(getMenuProvider(), getViewLifecycleOwner(), Lifecycle.State.RESUMED);
         addNoteLabelAddBtn.setOnClickListener(this);
+        insertImgBtn.setOnClickListener(this);
+    }
+
+    public void setUpEvent() {
+        noteDescription.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                boolean isDeleteDetect = false;
+                SpannableStringBuilder spannableStringBuilderInner = new SpannableStringBuilder(noteDescription.getText());
+
+                for (CustomClickableSpan span : spannableStringBuilderInner.getSpans(0, spannableStringBuilderInner.length(), CustomClickableSpan.class)) {
+                    if ((span != null && span instanceof CustomClickableSpan)) {
+                        isDeleteDetect = span.runOnIconClick(event.getX(), event.getY());
+                        if (isDeleteDetect) break;
+                    }
+                }
+            }
+            return false;
+        });
     }
 
     private MenuProvider getMenuProvider() {
@@ -162,6 +222,33 @@ public class AddNoteFragment extends Fragment
             bundle.putParcelableArrayList("chosen_labels", tmp);
             noteLabelDialogFragment.setArguments(bundle);
             noteLabelDialogFragment.show(getParentFragmentManager(), null);
+        } else if (id == insertImgBtn.getId()) {
+            launchGallery();
+        }
+    }
+
+    public void launchGallery() {
+        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galleryIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        startActivityForResult(galleryIntent, REQUEST_GALLERY_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_GALLERY_CODE && resultCode == RESULT_OK && data != null) {
+            //chose multiple images
+            List<Uri> uriList = new ArrayList<>();
+            if (data.getClipData() != null) {
+                ClipData clipData = data.getClipData();
+
+                for (int i = 0; i < clipData.getItemCount(); ++i) {
+                    uriList.add(clipData.getItemAt(i).getUri());
+                }
+            } else {
+                uriList.add(data.getData());
+            }
+            insertImgToEditTextView(requireActivity(), uriList, noteDescription);
         }
     }
 }

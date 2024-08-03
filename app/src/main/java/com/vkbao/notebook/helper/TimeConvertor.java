@@ -9,6 +9,10 @@ public class TimeConvertor {
         return (new Date()).getTime()/1000;
     }
 
+    public static long getCurrentUnixMiliSecond() {
+        return (new Date()).getTime();
+    }
+
     public static String convertUnixToLocalTime(long unixSecond) {
         return (new SimpleDateFormat("HH:mm:ss dd-MM-yyy")).format(unixSecond*1000);
     }

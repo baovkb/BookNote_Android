@@ -19,19 +19,19 @@ public class Image implements Parcelable {
     private long image_id;
     private long note_id;
     private String url;
-    private String description;
+    private String name;
 
-    public Image(long note_id, String url, String description) {
+    public Image(long note_id, String url, String name) {
         this.note_id = note_id;
         this.url = url;
-        this.description = description;
+        this.name = name;
     }
 
     protected Image(Parcel in) {
         image_id = in.readLong();
         note_id = in.readLong();
         url = in.readString();
-        description = in.readString();
+        name = in.readString();
     }
 
     public static final Creator<Image> CREATOR = new Creator<Image>() {
@@ -54,8 +54,8 @@ public class Image implements Parcelable {
         return url;
     }
 
-    public String getDescription() {
-        return description;
+    public String getName() {
+        return name;
     }
 
     public long getNote_id() {
@@ -70,8 +70,8 @@ public class Image implements Parcelable {
         this.url = url;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setImage_id(int image_id) {
@@ -88,6 +88,6 @@ public class Image implements Parcelable {
         parcel.writeLong(image_id);
         parcel.writeLong(note_id);
         parcel.writeString(url);
-        parcel.writeString(description);
+        parcel.writeString(name);
     }
 }
