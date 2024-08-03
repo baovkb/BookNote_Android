@@ -30,7 +30,7 @@ Compatibility: Android 13 and above
 
 <h3> ER model for database </h3>
 
-![ER Database](Screenshot/er_database.png)
+![ER Database](Screenshot/er_database_2.png)
 
 <h3> Some screenshot </h3>
 
