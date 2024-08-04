@@ -61,6 +61,12 @@ public class ImageRepository {
         });
     }
 
+    public void deleteByName(String name) {
+        executorService.execute(() -> {
+            imageDao.deleteImageByName(name);
+        });
+    }
+
     public LiveData<List<Image>> getAllImages() {
         return allImages;
     }

@@ -33,6 +33,10 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+interface OnDeleteIconClick {
+    public void onClick(CustomImageSpan customImageSpan);
+}
+
 public class Helper {
 
     private static final String TMP_IMG_DIR_NAME = "Temporary Images";
@@ -54,6 +58,8 @@ public class Helper {
         }
 
         File destinationFile = new File(desDirectory, newFileName);
+        if (destinationFile.exists()) return null;
+
         try (InputStream inputStream = new FileInputStream(srcFile);
              OutputStream outputStream = new FileOutputStream(destinationFile)) {
 
@@ -141,6 +147,13 @@ public class Helper {
         }
     }
 
+    public static void deleteFile(String path) {
+        File file = new File(path);
+        if (!file.exists() || file.isDirectory()) return;
+
+        file.delete();
+    }
+
     public static void insertImgToEditTextView(Activity activity, List<Uri> uriList, EditText editText) {
         if (editText != null) {
             try {
@@ -153,7 +166,7 @@ public class Helper {
 
                 SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(editText.getText());
                 for (Uri uriImg: uriList) {
-                    //image
+                    //main image
                     Drawable imageDrawable = ImageDecoder.decodeDrawable(ImageDecoder.createSource(activity.getContentResolver(), uriImg));
                     if (imageDrawable == null) continue;
 
@@ -170,42 +183,24 @@ public class Helper {
                     float ratio = getImgRatio(editText.getWidth(), imageDrawable.getIntrinsicWidth());
                     int imgWidth = (int)(imageDrawable.getIntrinsicWidth() * ratio);
                     int imgHeight = (int)(imageDrawable.getIntrinsicHeight() * ratio);
-
                     imageDrawable.setBounds(0, 0, imgWidth, imgHeight);
 
-                    int iconDeleteSize = 50;
-                    Drawable iconDeleteDrawable = ResourcesCompat.getDrawable(activity.getResources(), R.drawable.ic_action_delete_x, null);
-                    iconDeleteDrawable.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
-                    iconDeleteDrawable.setBounds(0, 0, iconDeleteSize, iconDeleteSize);
-
-                    CustomImageSpan imageSpan = new CustomImageSpan(
-                            imageDrawable,
-                            iconDeleteDrawable,
-                            cursorPosition,
-                            cursorPosition + replacedStr.length(),
-                            replacedStr
-                    );
-
-                    imageSpan.setOnIconClick(() -> {
-                        int start = imageSpan.getStart();
-                        int end = imageSpan.getEnd();
+                    SpannableStringBuilder getImgString = createImgString(activity, imageDrawable, replacedStr, (imageSpan) -> {
+                        String uniqueString = imageSpan.getUniqueString();
                         SpannableStringBuilder tmpStringBuilder = new SpannableStringBuilder(editText.getText());
-                        tmpStringBuilder.delete(start, end);
+                        String tmpStr = tmpStringBuilder.toString();
+                        int start = tmpStr.indexOf(uniqueString);
+                        if (start != -1)
+                            tmpStringBuilder.delete(start, start + uniqueString.length());
                         editText.setText(tmpStringBuilder);
                     });
 
-                    spannableStringBuilder.insert(cursorPosition, replacedStr + "\n");
-                    spannableStringBuilder.setSpan(imageSpan, imageSpan.getStart(), imageSpan.getEnd(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                    CustomClickableSpan customClickableSpan = new CustomClickableSpan(imageSpan);
-                    spannableStringBuilder.setSpan(customClickableSpan, imageSpan.getStart(), imageSpan.getEnd(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                    cursorPosition += 1 + replacedStr.length();
+                    spannableStringBuilder.insert(cursorPosition, getImgString);
+                    cursorPosition += replacedStr.length();
                 }
 
                 editText.setText(spannableStringBuilder);
                 editText.setSelection(cursorPosition);
-
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -214,6 +209,83 @@ public class Helper {
             }
 
         }
+    }
+
+    public static SpannableStringBuilder createImgString(Activity activity,
+                                                             Drawable mainDrawable,
+                                                             String uniqueString,
+                                                             OnDeleteIconClick listener) {
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(uniqueString);
+        if (mainDrawable == null) return spannableStringBuilder;
+
+        if (listener != null) {
+            int iconDeleteSize = 50;
+            Drawable iconDeleteDrawable = ResourcesCompat.getDrawable(activity.getResources(), R.drawable.ic_action_delete_x, null);
+            iconDeleteDrawable.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+            iconDeleteDrawable.setBounds(0, 0, iconDeleteSize, iconDeleteSize);
+
+            CustomImageSpan imageSpan = new CustomImageSpan(
+                    mainDrawable,
+                    iconDeleteDrawable,
+                    uniqueString
+            );
+
+            imageSpan.setOnIconClick(() -> {
+               listener.onClick(imageSpan);
+            });
+
+            //setSpan -> [start:end)
+            CustomClickableSpan customClickableSpan = new CustomClickableSpan(imageSpan);
+            spannableStringBuilder.setSpan(imageSpan, 0, uniqueString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableStringBuilder.setSpan(customClickableSpan, 0, uniqueString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } else {
+            ImageSpan imageSpan = new ImageSpan(mainDrawable);
+            spannableStringBuilder.setSpan(imageSpan, 0, uniqueString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        return spannableStringBuilder;
+    }
+
+    public static void parseTextModeEdit(Activity activity, List<Image> imageList, EditText editText, String text) {
+        SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text);
+
+        Pattern pattern = Pattern.compile("\\[img_(\\d+)\\]");
+        Matcher matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            int start = matcher.start();
+            int end = matcher.end();
+            String replacedString = matcher.group();
+            String nameImg = replacedString.replace("[img_", "").replace("]", "");
+
+            for (Image image: imageList) {
+                if (image.getName().equals(nameImg)) {
+                    File imgFile = new File(image.getUrl());
+
+                    try {
+                        Drawable imgDrawable = ImageDecoder.decodeDrawable(ImageDecoder.createSource(imgFile));
+                        if (imgDrawable == null) break;
+                        imgDrawable.setBounds(0, 0, imgDrawable.getIntrinsicWidth(), imgDrawable.getIntrinsicHeight());
+                        SpannableStringBuilder imgText = createImgString(activity, imgDrawable, replacedString, (imageSpan) -> {
+                            String uniqueString = imageSpan.getUniqueString();
+                            SpannableStringBuilder tmpStringBuilder = new SpannableStringBuilder(editText.getText());
+                            String tmpStr = tmpStringBuilder.toString();
+                            int startIndex = tmpStr.indexOf(uniqueString);
+                            if (startIndex != -1)
+                                tmpStringBuilder.delete(startIndex, startIndex + uniqueString.length());
+                            editText.setText(tmpStringBuilder);
+                        });
+
+                        stringBuilder.replace(start, end, imgText);
+
+                        break;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        editText.setText(stringBuilder);
+        editText.setSelection(stringBuilder.length());
     }
 
     public static List<String> getImgIDFromText(String text) {

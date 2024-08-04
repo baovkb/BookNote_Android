@@ -43,7 +43,11 @@ public class ImageViewModel extends AndroidViewModel {
     }
 
     public void deleteByNoteID(long note_id) {
-        imageRepository.deleteByID(note_id);
+        imageRepository.deleteByNoteID(note_id);
+    }
+
+    public void deleteByName(String name) {
+        imageRepository.deleteByName(name);
     }
 
     public Future<List<Image>> getImagesByNoteID(long note_id) {

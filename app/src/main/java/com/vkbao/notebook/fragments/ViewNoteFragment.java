@@ -128,6 +128,7 @@ public class ViewNoteFragment extends Fragment {
                         Bundle bundle = new Bundle();
                         bundle.putParcelable("note", note);
                         bundle.putParcelableArrayList("labels", new ArrayList<>(chosenLabel));
+                        bundle.putParcelableArrayList("images", new ArrayList<>(imageList));
                         EditNoteFragment editNoteFragment = new EditNoteFragment();
                         editNoteFragment.setArguments(bundle);
                         fragmentManager
@@ -159,9 +160,11 @@ public class ViewNoteFragment extends Fragment {
         }
     }
 
-    public void updateNoteData(Note newNote, List<Label> newLabels) {
+    public void updateNoteData(Note newNote, List<Label> newLabels, List<Image> newImageList) {
         this.note = newNote;
         this.chosenLabel.clear();
         this.chosenLabel.addAll(newLabels);
+        this.imageList.clear();
+        this.imageList.addAll(newImageList);
     }
 }

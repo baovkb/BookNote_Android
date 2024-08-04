@@ -9,6 +9,7 @@ Compatibility: Android 13 and above
 <h3> Features </h3>
 
 - Display, add, edit, delete note
+- insert/delete images to/from note
 - Display, add, edit, delete label
 - Display, add, edit, delete note's label
 - Classify note by label
@@ -17,7 +18,6 @@ Compatibility: Android 13 and above
 
 <h3> Expected features in the future </h3>
 
-- Attach images to note
 - Format note content such as Bold, Italic, Underline
 - Support dark and light theme
 - Save data in the cloud server

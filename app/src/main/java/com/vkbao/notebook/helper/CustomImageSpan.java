@@ -14,32 +14,21 @@ public class CustomImageSpan extends ImageSpan {
     private Drawable iconDrawable;
     private Rect iconRect;
     private Runnable onIconClick;
-    private int start;
-    private int end;
-    String replaceString;
+    private String uniqueString;
 
-    public CustomImageSpan(Drawable drawable, Drawable iconDrawable, int start, int end, String replacedString) {
+    public CustomImageSpan(Drawable drawable, Drawable iconDrawable, String uniqueString) {
         super(drawable, ALIGN_BOTTOM);
         this.iconDrawable = iconDrawable;
-        this.start = start;
-        this.end = end;
-        this.replaceString = replacedString;
+        this.uniqueString = uniqueString;
     }
 
     public void setOnIconClick(Runnable runnable) {
         this.onIconClick = runnable;
     }
 
-    public int getStart() {
-        return start;
-    }
 
-    public int getEnd() {
-        return end;
-    }
-
-    public String getReplaceString() {
-        return replaceString;
+    public String getUniqueString() {
+        return uniqueString;
     }
 
     @Override
