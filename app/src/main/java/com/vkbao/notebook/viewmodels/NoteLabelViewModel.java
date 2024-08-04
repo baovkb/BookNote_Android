@@ -15,6 +15,7 @@ import com.vkbao.notebook.models.NoteLabel;
 import com.vkbao.notebook.respository.NoteLabelRepository;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 public class NoteLabelViewModel extends AndroidViewModel {
     private NoteLabelRepository noteLabelRepository;
@@ -50,6 +51,10 @@ public class NoteLabelViewModel extends AndroidViewModel {
         noteLabelRepository.getLabelsByNoteID(note_id, callBack);
     }
 
+    public Future<List<Label>> getLabelsByNoteID(long note_id) {
+        return noteLabelRepository.getLabelsByNoteID(note_id);
+    }
+
     public void getNotesByLabelID(long label_id, CallBack<List<Note>> callBack) {
         noteLabelRepository.getNotesByLabelID(label_id, callBack);
     }
@@ -68,5 +73,9 @@ public class NoteLabelViewModel extends AndroidViewModel {
 
     public void getNotesLiveDataByLabelName(String label_name, CallBack<LiveData<List<Note>>> callBack) {
         noteLabelRepository.getNotesLiveDataByLabelName(label_name, callBack);
+    }
+
+    public void deleteNoteLabelByNoteID(long note_id) {
+        noteLabelRepository.deleteNoteLabelByNoteID(note_id);
     }
 }

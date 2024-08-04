@@ -61,4 +61,7 @@ public interface NoteLabelDao {
             "AND Label.label_id = NoteLabel.label_id " +
             "AND Label.name = :label_name")
     LiveData<List<Note>> getNotesLiveDataByLabelName(String label_name);
+
+    @Query("DELETE FROM NoteLabel WHERE note_id = :note_id")
+    void deleteNoteLabelByNoteID(long note_id);
 }

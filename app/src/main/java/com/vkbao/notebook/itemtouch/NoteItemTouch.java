@@ -17,20 +17,16 @@ import com.vkbao.notebook.viewmodels.NoteViewModel;
 import java.util.List;
 
 public class NoteItemTouch extends ItemTouchHelper.SimpleCallback {
-    public interface OnItemSwipe<Note, NoteLabel> {
-        public void onSwipe(Note note, List<NoteLabel> noteLabelList);
+    public interface OnItemSwipe<T> {
+        public void onSwipe(T id);
     }
 
     private final String TAG = "NoteItemTouch";
-    private NoteViewModel noteViewModel;
-    private NoteLabelViewModel noteLabelViewModel;
     private NoteAdapter noteAdapter;
     private OnItemSwipe listener;
 
-    public NoteItemTouch(NoteViewModel noteViewModel, NoteLabelViewModel noteLabelViewModel, NoteAdapter noteAdapter) {
+    public NoteItemTouch(NoteAdapter noteAdapter) {
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
-        this.noteViewModel = noteViewModel;
-        this.noteLabelViewModel = noteLabelViewModel;
         this.noteAdapter = noteAdapter;
         this.listener = null;
     }
@@ -45,16 +41,12 @@ public class NoteItemTouch extends ItemTouchHelper.SimpleCallback {
         if (listener != null) {
             int position_swpipe = viewHolder.getAdapterPosition();
             noteAdapter.notifyItemChanged(position_swpipe);
-            long note_id = ((GetSetAttributeItemAdapter<Long>)viewHolder).get();
-            noteViewModel.getNoteByID(note_id, (noteResult) -> {
-                noteLabelViewModel.getNoteLabelByNoteID(note_id, (noteLabelList) -> {
-                    listener.onSwipe(noteResult, noteLabelList);
-                });
-            });
+            Long note_id = Long.valueOf(((GetSetAttributeItemAdapter<Long>)viewHolder).get());
+            listener.onSwipe(note_id);
         }
     }
 
-    public void setOnSwipeListener(OnItemSwipe<Note, NoteLabel> listener) {
+    public void setOnSwipeListener(OnItemSwipe<Long> listener) {
         this.listener = listener;
     }
 }

@@ -17,9 +17,12 @@ import com.vkbao.notebook.models.Note;
 import com.vkbao.notebook.models.NoteLabel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class NoteLabelRepository {
     private NoteLabelDao noteLabelDao;
@@ -61,8 +64,16 @@ public class NoteLabelRepository {
             List<Label> labelList = noteLabelDao.getLabelsByNoteID(note_id);
             if (labelList != null) {
                 new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(labelList));
-            } else {
+            } else
                 new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(new ArrayList<>()));
+        });
+    }
+
+    public Future<List<Label>> getLabelsByNoteID(long note_id) {
+        return executorService.submit(new Callable<List<Label>>() {
+            @Override
+            public List<Label> call() throws Exception {
+                return noteLabelDao.getLabelsByNoteID(note_id);
             }
         });
     }
@@ -117,6 +128,12 @@ public class NoteLabelRepository {
             LiveData<List<Note>> noteListLiveData = noteLabelDao.getNotesLiveDataByLabelName(label_name);
 
             new Handler(Looper.getMainLooper()).post(() -> callBack.onResult(noteListLiveData));
+        });
+    }
+
+    public void deleteNoteLabelByNoteID(long note_id) {
+        executorService.execute(() -> {
+            noteLabelDao.deleteNoteLabelByNoteID(note_id);
         });
     }
 }

@@ -22,22 +22,34 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.vkbao.notebook.R;
 import com.vkbao.notebook.activities.MainActivity;
 import com.vkbao.notebook.adapters.NoteAdapter;
+import com.vkbao.notebook.models.Image;
+import com.vkbao.notebook.models.Label;
+import com.vkbao.notebook.models.Note;
+import com.vkbao.notebook.viewmodels.ImageViewModel;
 import com.vkbao.notebook.viewmodels.NoteLabelViewModel;
 import com.vkbao.notebook.viewmodels.NoteViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class SearchNoteFragment extends Fragment {
     private TextInputEditText searchTextSearchBar;
     private RecyclerView searchNoteRCV;
     private NoteViewModel noteViewModel;
-    private NoteAdapter noteAdapter;
     private NoteLabelViewModel noteLabelViewModel;
+    private ImageViewModel imageViewModel;
+    private NoteAdapter noteAdapter;
+
 
     public SearchNoteFragment() {
         // Required empty public constructor
@@ -75,7 +87,8 @@ public class SearchNoteFragment extends Fragment {
         searchNoteRCV = view.findViewById(R.id.search_note_result_recycler_view);
         noteViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
         noteLabelViewModel = new ViewModelProvider(requireActivity()).get(NoteLabelViewModel.class);
-        noteAdapter = new NoteAdapter();
+        imageViewModel = new ViewModelProvider(requireActivity()).get(ImageViewModel.class);
+        noteAdapter = new NoteAdapter(requireActivity());
         searchNoteRCV.setLayoutManager(new LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false));
         searchNoteRCV.setAdapter(noteAdapter);
     }
@@ -106,22 +119,7 @@ public class SearchNoteFragment extends Fragment {
         });
 
         noteAdapter.setOnItemClickListener((note) -> {
-            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            ViewNoteFragment viewNoteFragment = new ViewNoteFragment();
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("note", note);
-//          get all label of note
-            noteLabelViewModel.getLabelsByNoteID(note.getNote_id(), (labelList) -> {
-                ArrayList tmp = new ArrayList<>(labelList);
-                bundle.putParcelableArrayList("labels", tmp);
-                viewNoteFragment.setArguments(bundle);
-
-                fragmentManager
-                        .beginTransaction()
-                        .replace(R.id.main_screen_fragment, viewNoteFragment)
-                        .addToBackStack(null)
-                        .commit();
-            });
+            startViewNoteFragment(note);
         });
     }
 
@@ -141,5 +139,41 @@ public class SearchNoteFragment extends Fragment {
                 return true;
             }
         };
+    }
+
+    public void startViewNoteFragment(Note note) {
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        executorService.execute(() -> {
+            Future<List<Label>> listLabelFuture = noteLabelViewModel.getLabelsByNoteID(note.getNote_id());
+            Future<List<Image>> listImageFuture = imageViewModel.getImagesByNoteID(note.getNote_id());
+
+            try {
+                List<Label> labelList = listLabelFuture.get();
+                List<Image> imageList = listImageFuture.get();
+
+                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                ViewNoteFragment viewNoteFragment = new ViewNoteFragment();
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("note", note);
+
+                //get all labels, images of note
+                ArrayList labelArrayList = new ArrayList<>(labelList);
+                ArrayList imageArrayList = new ArrayList<>(imageList);
+                bundle.putParcelableArrayList("labels", labelArrayList);
+                bundle.putParcelableArrayList("images", imageArrayList);
+                viewNoteFragment.setArguments(bundle);
+
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.main_screen_fragment, viewNoteFragment)
+                        .addToBackStack(null)
+                        .commit();
+
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

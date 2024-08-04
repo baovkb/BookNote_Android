@@ -15,6 +15,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,6 +30,8 @@ import com.vkbao.notebook.R;
 import com.vkbao.notebook.activities.MainActivity;
 import com.vkbao.notebook.adapters.AddNoteLabelAdapter;
 import com.vkbao.notebook.dialogs.NoteLabelDialogFragment;
+import com.vkbao.notebook.helper.Helper;
+import com.vkbao.notebook.models.Image;
 import com.vkbao.notebook.models.Label;
 import com.vkbao.notebook.models.Note;
 import com.vkbao.notebook.models.NoteLabel;
@@ -35,6 +39,7 @@ import com.vkbao.notebook.viewmodels.ImageViewModel;
 import com.vkbao.notebook.viewmodels.NoteLabelViewModel;
 import com.vkbao.notebook.viewmodels.NoteViewModel;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +51,7 @@ public class ViewNoteFragment extends Fragment {
     private ImageViewModel imageViewModel;
     private Note note;
     private List<Label> chosenLabel;
+    private List<Image> imageList;
     private AddNoteLabelAdapter viewNoteLabelAdapter;
     private RecyclerView viewNoteLabelRecyclerView;
 
@@ -72,8 +78,10 @@ public class ViewNoteFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         if (getArguments() != null) {
-            note = getArguments().getParcelable("note");
-            chosenLabel = getArguments().getParcelableArrayList("labels") != null ? getArguments().getParcelableArrayList("labels") : new ArrayList<>();
+            Bundle bundle = getArguments();
+            note = bundle.getParcelable("note");
+            chosenLabel = bundle.getParcelableArrayList("labels") != null ? bundle.getParcelableArrayList("labels") : new ArrayList<>();
+            imageList = bundle.getParcelableArrayList("images") != null ? bundle.getParcelableArrayList("images") : new ArrayList<>();
         }
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.view_note_toolbar);
@@ -96,7 +104,9 @@ public class ViewNoteFragment extends Fragment {
         viewNoteLabelRecyclerView.setAdapter(viewNoteLabelAdapter);
         viewNoteLabelAdapter.setLabel(chosenLabel);
 
+
         updateNoteLayout();
+
     }
 
     private MenuProvider getMenuProvider() {
@@ -128,10 +138,8 @@ public class ViewNoteFragment extends Fragment {
                     }
 
                 } else if (id == R.id.delete_note) {
-                    noteLabelViewModel.getNoteLabelByNoteID(note.getNote_id(), (noteLabelsResult) -> {
-                        NoteLabel[] noteLabelArray = noteLabelsResult.toArray(noteLabelsResult.toArray(new NoteLabel[0]));
-                        noteLabelViewModel.delete(noteLabelArray);
-                    });
+                    noteLabelViewModel.deleteNoteLabelByNoteID(note.getNote_id());
+                    imageViewModel.deleteByNoteID(note.getNote_id());
                     noteViewModel.delete(note);
                     fragmentManager.popBackStack();
                 }
@@ -143,7 +151,8 @@ public class ViewNoteFragment extends Fragment {
     public void updateNoteLayout() {
         if (note != null) {
             noteTitle.setText(note.getTitle());
-            noteDescription.setText(note.getDescription());
+            SpannableStringBuilder stringBuilder = Helper.parseText(note.getDescription(), imageList);
+            noteDescription.setText(stringBuilder);
         }
         if (chosenLabel != null) {
             viewNoteLabelAdapter.notifyDataSetChanged();

@@ -1,5 +1,7 @@
 package com.vkbao.notebook.adapters;
 
+import android.content.Context;
+import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,13 +13,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.vkbao.notebook.R;
 import com.vkbao.notebook.helper.GetSetAttributeItemAdapter;
+import com.vkbao.notebook.helper.Helper;
 import com.vkbao.notebook.models.Note;
 import com.vkbao.notebook.viewmodels.NoteViewModel;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NotesViewHolder> {
+    private Context context;
     public interface OnItemClickListener<V> {
         public void onClick(V note);
     }
@@ -25,9 +30,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NotesViewHolde
     private List<Note> notes;
     OnItemClickListener listener;
 
-    public NoteAdapter() {
+    public NoteAdapter(Context context) {
         this.notes = new ArrayList<>();
         this.listener = null;
+        this.context = context;
     }
 
     public void setOnItemClickListener(OnItemClickListener<Note> listener) {
@@ -45,8 +51,16 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NotesViewHolde
     public void onBindViewHolder(@NonNull NotesViewHolder holder, int position) {
         Note noteItem = notes.get(position);
         holder.getNoteTitleTextView().setText(noteItem.getTitle());
-        holder.getNoteContentTextView().setText(noteItem.getDescription());
+
+        try {
+            SpannableStringBuilder description = Helper.parseText(context, noteItem.getDescription());
+            holder.getNoteContentTextView().setText(description);
+        } catch (Exception e) {
+            holder.getNoteContentTextView().setText(noteItem.getDescription());
+        }
+
         holder.set(noteItem.getNote_id());
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

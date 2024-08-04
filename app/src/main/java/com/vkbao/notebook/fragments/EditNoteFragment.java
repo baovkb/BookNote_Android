@@ -35,6 +35,7 @@ import com.vkbao.notebook.models.NoteLabel;
 import com.vkbao.notebook.viewmodels.NoteLabelViewModel;
 import com.vkbao.notebook.viewmodels.NoteViewModel;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

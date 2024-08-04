@@ -8,14 +8,17 @@ import android.graphics.ImageDecoder;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.style.ImageSpan;
 import android.widget.EditText;
 
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.vkbao.notebook.R;
+import com.vkbao.notebook.models.Image;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,13 +27,24 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Helper {
 
     private static final String TMP_IMG_DIR_NAME = "Temporary Images";
     private static final String IMG_DIR_NAME = "Images";
+
+    public static String getImgPath(Context context) {
+        return context.getFilesDir() + "/" + IMG_DIR_NAME;
+    }
+
+    public static String getTmpImgPath(Context context) {
+        return context.getFilesDir() + "/" + TMP_IMG_DIR_NAME;
+    }
 
     public static String copyFileToInternalStorage(File srcFile, File desDirectory, String newFileName) {
         if (!srcFile.exists()) return null;
@@ -144,13 +158,13 @@ public class Helper {
                     if (imageDrawable == null) continue;
 
                     String uniqueStr = Long.toString(TimeConvertor.getCurrentUnixMiliSecond()) + Helper.randomInt(1, 100);
-                    String replacedStr = "[img_ " + uniqueStr + "]";
+                    String replacedStr = "[img_" + uniqueStr + "]";
 
                     //copy selected images to temporary directory
                     copyFileToInternalStorage(
                             activity.getApplicationContext(),
                             uriImg,
-                            activity.getApplicationContext().getFilesDir() + "/" + TMP_IMG_DIR_NAME,
+                            getTmpImgPath(activity),
                             uniqueStr + ".jpeg");
 
                     float ratio = getImgRatio(editText.getWidth(), imageDrawable.getIntrinsicWidth());
@@ -162,7 +176,6 @@ public class Helper {
                     int iconDeleteSize = 50;
                     Drawable iconDeleteDrawable = ResourcesCompat.getDrawable(activity.getResources(), R.drawable.ic_action_delete_x, null);
                     iconDeleteDrawable.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
-
                     iconDeleteDrawable.setBounds(0, 0, iconDeleteSize, iconDeleteSize);
 
                     CustomImageSpan imageSpan = new CustomImageSpan(
@@ -201,5 +214,76 @@ public class Helper {
             }
 
         }
+    }
+
+    public static List<String> getImgIDFromText(String text) {
+        List<String> idImgList = new ArrayList<>();
+        String regex = "\\[img_(\\d+)\\]";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(text);
+
+        while(matcher.find()) {
+            idImgList.add(matcher.group().replace("[img_", "").replace("]", ""));
+        }
+
+        return idImgList;
+    }
+
+    public static SpannableStringBuilder parseText(String text, List<Image> imageList) {
+        SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text);
+
+        Pattern pattern = Pattern.compile("\\[img_(\\d+)\\]");
+        Matcher matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            int start = matcher.start();
+            int end = matcher.end();
+            String nameImg = matcher.group().replace("[img_", "").replace("]", "");
+
+            for (Image image: imageList) {
+                if (image.getName().equals(nameImg)) {
+                    File imgFile = new File(image.getUrl());
+
+                    try {
+                        Drawable imgDrawable = ImageDecoder.decodeDrawable(ImageDecoder.createSource(imgFile));
+                        imgDrawable.setBounds(0, 0, imgDrawable.getIntrinsicWidth(), imgDrawable.getIntrinsicHeight());
+                        if (imgDrawable == null) break;
+
+                        ImageSpan imageSpan = new ImageSpan(imgDrawable);
+                        stringBuilder.setSpan(imageSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                        break;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return stringBuilder;
+    }
+
+    public static SpannableStringBuilder parseText(Context context, String text) {
+        SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text);
+        Pattern pattern = Pattern.compile("\\[img_(\\d+)\\]");
+        Matcher matcher = pattern.matcher(text);
+
+        while (matcher.find()) {
+            int start = matcher.start();
+            int end = matcher.end();
+
+            try {
+                Drawable imgDrawable = ImageDecoder.decodeDrawable(ImageDecoder.createSource(context.getResources(), R.drawable.ic_action_image));
+                if (imgDrawable == null) continue;
+                imgDrawable.setBounds(0, 0, 60, 60);
+                imgDrawable.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+
+                ImageSpan imageSpan = new ImageSpan(imgDrawable);
+                stringBuilder.setSpan(imageSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return stringBuilder;
     }
 }

@@ -8,9 +8,12 @@ import com.vkbao.notebook.daos.ImageDao;
 import com.vkbao.notebook.databases.AppDatabase;
 import com.vkbao.notebook.models.Image;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class ImageRepository {
     private ImageDao imageDao;
@@ -41,6 +44,21 @@ public class ImageRepository {
 
     public void deleteByID(long image_id) {
         executorService.execute(() -> imageDao.deleteImageByID(image_id));
+    }
+
+    public Future<List<Image>> getImagesByNoteID(long note_id) {
+        return executorService.submit(new Callable<List<Image>>() {
+            @Override
+            public List<Image> call() throws Exception {
+                return imageDao.getImagesByNoteID(note_id);
+            }
+        });
+    }
+
+    public void deleteByNoteID(long note_id) {
+        executorService.execute(() ->{
+            imageDao.deleteImageByNoteID(note_id);
+        });
     }
 
     public LiveData<List<Image>> getAllImages() {

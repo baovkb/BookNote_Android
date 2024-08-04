@@ -28,6 +28,9 @@ public interface ImageDao {
     @Query("DELETE FROM Image WHERE image_id = :image_id")
     void deleteImageByID(long image_id);
 
+    @Query("DELETE FROM Image WHERE note_id = :note_id")
+    void deleteImageByNoteID(long note_id);
+
     @Query("SELECT * FROM Image WHERE note_id=:note_id")
     List<Image> getImagesByNoteID(final long note_id);
 

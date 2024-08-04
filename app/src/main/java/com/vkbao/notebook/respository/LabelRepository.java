@@ -12,6 +12,7 @@ import com.vkbao.notebook.models.Label;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class LabelRepository {
     private LabelDao labelDao;

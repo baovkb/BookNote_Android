@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
@@ -89,5 +90,16 @@ public class Image implements Parcelable {
         parcel.writeLong(note_id);
         parcel.writeString(url);
         parcel.writeString(name);
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == this) return true;
+        if (!(obj instanceof Image)) return false;
+        obj = (Image)obj;
+        return ((Image) obj).getImage_id() == this.getImage_id()
+                && ((Image) obj).getName() == this.getName()
+                && ((Image) obj).getNote_id() == this.getNote_id()
+                && ((Image) obj).getUrl() == this.getUrl();
     }
 }

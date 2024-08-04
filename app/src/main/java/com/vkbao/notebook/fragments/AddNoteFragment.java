@@ -2,6 +2,7 @@ package com.vkbao.notebook.fragments;
 
 import static android.app.Activity.RESULT_OK;
 
+import static com.vkbao.notebook.helper.Helper.getImgPath;
 import static com.vkbao.notebook.helper.Helper.insertImgToEditTextView;
 
 import android.annotation.SuppressLint;
@@ -64,6 +65,7 @@ import com.vkbao.notebook.helper.CustomClickableSpan;
 import com.vkbao.notebook.helper.CustomImageSpan;
 import com.vkbao.notebook.helper.Helper;
 import com.vkbao.notebook.helper.TimeConvertor;
+import com.vkbao.notebook.models.Image;
 import com.vkbao.notebook.models.Label;
 import com.vkbao.notebook.models.Note;
 import com.vkbao.notebook.models.NoteLabel;
@@ -73,6 +75,7 @@ import com.vkbao.notebook.viewmodels.LabelViewModel;
 import com.vkbao.notebook.viewmodels.NoteLabelViewModel;
 import com.vkbao.notebook.viewmodels.NoteViewModel;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -128,6 +131,7 @@ public class AddNoteFragment extends Fragment
 
         noteViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
         noteLabelViewModel = new ViewModelProvider(requireActivity()).get(NoteLabelViewModel.class);
+        imageViewModel = new ViewModelProvider(requireActivity()).get(ImageViewModel.class);
         tmpChosenLabel = new ArrayList<>();
 
         noteTitle = view.findViewById(R.id.add_note_title_text_input_field);
@@ -181,15 +185,40 @@ public class AddNoteFragment extends Fragment
                     String title = noteTitle.getText().toString();
                     String description = noteDescription.getText().toString();
                     if (!title.trim().isEmpty() || !description.trim().isEmpty()) {
+
+                        final List<String> imgAbsolutePathList = new ArrayList<>();
+                        final List<String> imgNameList = new ArrayList<>();
+                        Thread copyImgThread = new Thread(() -> {
+                            imgNameList.addAll(Helper.getImgIDFromText(description));
+                            imgAbsolutePathList.addAll(copyImg(imgNameList));
+                        });
+                        copyImgThread.start();
+
                         long currentUnix = TimeConvertor.getCurrentUnixSecond();
                         Note note = new Note(title, description, currentUnix, currentUnix);
                         noteViewModel.insert(result -> {
                             if (result != null && result.length == 1) {
+
+                                //insert note label to db
                                 NoteLabel[] noteLabelArray = new NoteLabel[tmpChosenLabel.size()];
                                 for (int i = 0; i < tmpChosenLabel.size(); ++i) {
                                     noteLabelArray[i] = new NoteLabel(result[0], tmpChosenLabel.get(i).getLabel_id());
                                 }
                                 noteLabelViewModel.insert(noteLabelArray);
+
+                                //wait for copy img thread done
+                                try {
+                                    copyImgThread.join();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                                //insert image to db
+                                Image[] images = new Image[imgNameList.size()];
+                                for (int i = 0; i < imgNameList.size(); ++i) {
+                                    images[i] = new Image(result[0], imgAbsolutePathList.get(i), imgNameList.get(i));
+                                }
+                                imageViewModel.insert(images);
                             }
                         }, note);
                     }
@@ -250,5 +279,17 @@ public class AddNoteFragment extends Fragment
             }
             insertImgToEditTextView(requireActivity(), uriList, noteDescription);
         }
+    }
+
+    public List<String> copyImg(List<String> idImgeList) {
+        File destDir = new File(getImgPath(requireActivity()));
+        List<String> imgPathList = new ArrayList<>();
+        for (String idImg: idImgeList) {
+            File SrcImg = new File(Helper.getTmpImgPath(requireActivity()), idImg +".jpeg");
+            String absolutePath = Helper.copyFileToInternalStorage(SrcImg, destDir, idImg +".jpeg");
+            imgPathList.add(absolutePath);
+        }
+
+        return imgPathList;
     }
 }
