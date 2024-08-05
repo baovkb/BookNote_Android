@@ -199,6 +199,9 @@ public class EditNoteFragment extends Fragment implements View.OnClickListener {
                             //save img in description
                             saveImg(noteDescription.getText().toString(), note.getNote_id());
 
+                            //delete temporary image
+                            Helper.cleanDirectory(new File(Helper.getTmpImgPath(requireActivity())));
+
                             //quite edit note fragment
                             fragmentManager.popBackStackImmediate();
 

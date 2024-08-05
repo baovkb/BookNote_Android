@@ -219,10 +219,15 @@ public class AddNoteFragment extends Fragment
                                     images[i] = new Image(result[0], imgAbsolutePathList.get(i), imgNameList.get(i));
                                 }
                                 imageViewModel.insert(images);
+
+                                //delete temporary image
+                                Helper.cleanDirectory(new File(Helper.getTmpImgPath(requireActivity())));
+
+                                fragmentManager.popBackStackImmediate();
                             }
                         }, note);
                     }
-                    fragmentManager.popBackStack();
+
                 }
                 return true;
             }

@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import com.vkbao.notebook.R;
 import com.vkbao.notebook.adapters.NoteAdapter;
 import com.vkbao.notebook.helper.CallBack;
+import com.vkbao.notebook.helper.Helper;
 import com.vkbao.notebook.itemtouch.NoteItemTouch;
 import com.vkbao.notebook.models.Image;
 import com.vkbao.notebook.models.Label;
@@ -95,6 +96,7 @@ public class ListNoteFragment extends Fragment {
         noteItemTouch.setOnSwipeListener((note_id) -> {
             long note_id_pri = note_id.longValue();
             noteLabelViewModel.deleteNoteLabelByNoteID(note_id_pri);
+            deleteImgInInternalStorage(note_id_pri);
             imageViewModel.deleteByNoteID(note_id_pri);
             noteViewModel.deleteByID(note_id_pri);
         });
@@ -118,6 +120,17 @@ public class ListNoteFragment extends Fragment {
                     }
                 });
             }
+        }
+    }
+
+    public void deleteImgInInternalStorage(long note_id) {
+        try {
+            List<Image> imageList = imageViewModel.getImagesByNoteID(note_id).get();
+            for (Image image: imageList) {
+                Helper.deleteFile(image.getUrl());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

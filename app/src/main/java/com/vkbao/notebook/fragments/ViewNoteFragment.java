@@ -42,6 +42,7 @@ import com.vkbao.notebook.viewmodels.NoteViewModel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 public class ViewNoteFragment extends Fragment {
     private NoteViewModel noteViewModel;
@@ -90,6 +91,7 @@ public class ViewNoteFragment extends Fragment {
         ((MainActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
 
         noteViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
+        imageViewModel = new ViewModelProvider(requireActivity()).get(ImageViewModel.class);
 
         noteTitle = view.findViewById(R.id.view_note_title_text_input_field);
         noteDescription = view.findViewById(R.id.view_note_description_text_input_field);
@@ -140,6 +142,7 @@ public class ViewNoteFragment extends Fragment {
 
                 } else if (id == R.id.delete_note) {
                     noteLabelViewModel.deleteNoteLabelByNoteID(note.getNote_id());
+                    deleteImgInInternalStorage(note.getNote_id());
                     imageViewModel.deleteByNoteID(note.getNote_id());
                     noteViewModel.delete(note);
                     fragmentManager.popBackStack();
@@ -147,6 +150,17 @@ public class ViewNoteFragment extends Fragment {
                 return true;
             }
         };
+    }
+
+    public void deleteImgInInternalStorage(long note_id) {
+        try {
+            List<Image> imageList = imageViewModel.getImagesByNoteID(note_id).get();
+            for (Image image: imageList) {
+                Helper.deleteFile(image.getUrl());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void updateNoteLayout() {
