@@ -36,8 +36,8 @@ You can try it at [here](app/release/app-release.apk)
 
 <h3> Some screenshot </h3>
 
-![main_screen](Screenshot/img_1.png)
-![main_screen](Screenshot/img_2.png)
-![main_screen](Screenshot/img_3.png) 
+![main_screen](Screenshot/note_1.png)
+![main_screen](Screenshot/note_2.png)
+![main_screen](Screenshot/note_3.png) 
 
 
