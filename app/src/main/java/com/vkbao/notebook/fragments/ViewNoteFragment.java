@@ -56,6 +56,8 @@ public class ViewNoteFragment extends Fragment {
     private AddNoteLabelAdapter viewNoteLabelAdapter;
     private RecyclerView viewNoteLabelRecyclerView;
 
+//    private FragmentViewNoteBinding binding;
+
     public ViewNoteFragment() {
         // Required empty public constructor
     }
@@ -69,6 +71,7 @@ public class ViewNoteFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+//        binding = FragmentViewNoteBinding.inflate(inflater, container, false);
         View view = inflater.inflate(R.layout.fragment_view_note, container, false);
 
         return view;
@@ -105,7 +108,6 @@ public class ViewNoteFragment extends Fragment {
         viewNoteLabelRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false));
         viewNoteLabelRecyclerView.setAdapter(viewNoteLabelAdapter);
         viewNoteLabelAdapter.setLabel(chosenLabel);
-
 
         updateNoteLayout();
 
@@ -166,8 +168,14 @@ public class ViewNoteFragment extends Fragment {
     public void updateNoteLayout() {
         if (note != null) {
             noteTitle.setText(note.getTitle());
-            SpannableStringBuilder stringBuilder = Helper.parseText(note.getDescription(), imageList);
-            noteDescription.setText(stringBuilder);
+
+            noteDescription.post(() -> {
+                SpannableStringBuilder stringBuilder = Helper.parseText(note.getDescription(), noteDescription.getWidth(), imageList);
+
+                noteDescription.setText(stringBuilder);
+            });
+
+
         }
         if (chosenLabel != null) {
             viewNoteLabelAdapter.notifyDataSetChanged();

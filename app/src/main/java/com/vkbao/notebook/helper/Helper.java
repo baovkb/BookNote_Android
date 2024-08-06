@@ -3,12 +3,10 @@ package com.vkbao.notebook.helper;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ImageSpan;
@@ -125,7 +123,7 @@ public class Helper {
 
     private static float getImgRatio(int widthView, int imgWidth) {
         if (imgWidth > widthView) {
-            return widthView / imgWidth;
+            return (float)widthView / imgWidth;
         }
         return 1;
     }
@@ -156,58 +154,45 @@ public class Helper {
 
     public static void insertImgToEditTextView(Activity activity, List<Uri> uriList, EditText editText) {
         if (editText != null) {
-            try {
-                int cursorPosition = 0;
-                if (editText.isFocused()) {
-                    cursorPosition = editText.getSelectionStart();
-                } else {
-                    cursorPosition = editText.getText().length();
-                }
-
-                SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(editText.getText());
-                for (Uri uriImg: uriList) {
-                    //main image
-                    Drawable imageDrawable = ImageDecoder.decodeDrawable(ImageDecoder.createSource(activity.getContentResolver(), uriImg));
-                    if (imageDrawable == null) continue;
-
-                    String uniqueStr = Long.toString(TimeConvertor.getCurrentUnixMiliSecond()) + Helper.randomInt(1, 100);
-                    String replacedStr = "[img_" + uniqueStr + "]";
-
-                    //copy selected images to temporary directory
-                    copyFileToInternalStorage(
-                            activity.getApplicationContext(),
-                            uriImg,
-                            getTmpImgPath(activity),
-                            uniqueStr + ".jpeg");
-
-                    float ratio = getImgRatio(editText.getWidth(), imageDrawable.getIntrinsicWidth());
-                    int imgWidth = (int)(imageDrawable.getIntrinsicWidth() * ratio);
-                    int imgHeight = (int)(imageDrawable.getIntrinsicHeight() * ratio);
-                    imageDrawable.setBounds(0, 0, imgWidth, imgHeight);
-
-                    SpannableStringBuilder getImgString = createImgString(activity, imageDrawable, replacedStr, (imageSpan) -> {
-                        String uniqueString = imageSpan.getUniqueString();
-                        SpannableStringBuilder tmpStringBuilder = new SpannableStringBuilder(editText.getText());
-                        String tmpStr = tmpStringBuilder.toString();
-                        int start = tmpStr.indexOf(uniqueString);
-                        if (start != -1)
-                            tmpStringBuilder.delete(start, start + uniqueString.length());
-                        editText.setText(tmpStringBuilder);
-                    });
-
-                    spannableStringBuilder.insert(cursorPosition, getImgString);
-                    cursorPosition += replacedStr.length();
-                }
-
-                editText.setText(spannableStringBuilder);
-                editText.setSelection(cursorPosition);
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            int cursorPosition = 0;
+            if (editText.isFocused()) {
+                cursorPosition = editText.getSelectionStart();
+            } else {
+                cursorPosition = editText.getText().length();
             }
 
+            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(editText.getText());
+            for (Uri uriImg: uriList) {
+                //main image
+                Drawable imageDrawable = createImagDrawable(activity, uriImg, editText.getWidth());
+                if (imageDrawable == null) continue;
+
+                String uniqueStr = Long.toString(TimeConvertor.getCurrentUnixMiliSecond()) + Helper.randomInt(1, 100);
+                String replacedStr = "[img_" + uniqueStr + "]";
+
+                //copy selected images to temporary directory
+                copyFileToInternalStorage(
+                        activity.getApplicationContext(),
+                        uriImg,
+                        getTmpImgPath(activity),
+                        uniqueStr + ".jpeg");
+
+
+                SpannableStringBuilder getImgString = createImgString(activity, imageDrawable, replacedStr, (imageSpan) -> {
+                    String uniqueString = imageSpan.getUniqueString();
+                    SpannableStringBuilder tmpStringBuilder = new SpannableStringBuilder(editText.getText());
+                    String tmpStr = tmpStringBuilder.toString();
+                    int start = tmpStr.indexOf(uniqueString);
+                    if (start != -1)
+                        tmpStringBuilder.delete(start, start + uniqueString.length());
+                    editText.setText(tmpStringBuilder);
+                });
+
+                spannableStringBuilder.insert(cursorPosition, getImgString);
+                cursorPosition += replacedStr.length();
+            }
+
+            editText.setText(spannableStringBuilder);
         }
     }
 
@@ -219,10 +204,7 @@ public class Helper {
         if (mainDrawable == null) return spannableStringBuilder;
 
         if (listener != null) {
-            int iconDeleteSize = 50;
-            Drawable iconDeleteDrawable = ResourcesCompat.getDrawable(activity.getResources(), R.drawable.ic_action_delete_x, null);
-            iconDeleteDrawable.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
-            iconDeleteDrawable.setBounds(0, 0, iconDeleteSize, iconDeleteSize);
+            Drawable iconDeleteDrawable = createDeleteIcon(activity);
 
             CustomImageSpan imageSpan = new CustomImageSpan(
                     mainDrawable,
@@ -249,22 +231,22 @@ public class Helper {
     public static void parseTextModeEdit(Activity activity, List<Image> imageList, EditText editText, String text) {
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text);
 
-        Pattern pattern = Pattern.compile("\\[img_(\\d+)\\]");
-        Matcher matcher = pattern.matcher(text);
-        while (matcher.find()) {
-            int start = matcher.start();
-            int end = matcher.end();
-            String replacedString = matcher.group();
-            String nameImg = replacedString.replace("[img_", "").replace("]", "");
+        editText.post(() -> {
+            Pattern pattern = Pattern.compile("\\[img_(\\d+)\\]");
+            Matcher matcher = pattern.matcher(text);
+            while (matcher.find()) {
+                int start = matcher.start();
+                int end = matcher.end();
+                String replacedString = matcher.group();
+                String nameImg = replacedString.replace("[img_", "").replace("]", "");
 
-            for (Image image: imageList) {
-                if (image.getName().equals(nameImg)) {
-                    File imgFile = new File(image.getUrl());
+                for (Image image: imageList) {
+                    if (image.getName().equals(nameImg)) {
+                        File imgFile = new File(image.getUrl());
 
-                    try {
-                        Drawable imgDrawable = ImageDecoder.decodeDrawable(ImageDecoder.createSource(imgFile));
+                        Drawable imgDrawable = createImgDrawable(imgFile, editText.getWidth());
                         if (imgDrawable == null) break;
-                        imgDrawable.setBounds(0, 0, imgDrawable.getIntrinsicWidth(), imgDrawable.getIntrinsicHeight());
+
                         SpannableStringBuilder imgText = createImgString(activity, imgDrawable, replacedString, (imageSpan) -> {
                             String uniqueString = imageSpan.getUniqueString();
                             SpannableStringBuilder tmpStringBuilder = new SpannableStringBuilder(editText.getText());
@@ -278,14 +260,13 @@ public class Helper {
                         stringBuilder.replace(start, end, imgText);
 
                         break;
-                    } catch (IOException e) {
-                        e.printStackTrace();
+
                     }
                 }
             }
-        }
-        editText.setText(stringBuilder);
-        editText.setSelection(stringBuilder.length());
+            editText.setText(stringBuilder);
+        });
+
     }
 
     public static List<String> getImgIDFromText(String text) {
@@ -301,7 +282,7 @@ public class Helper {
         return idImgList;
     }
 
-    public static SpannableStringBuilder parseText(String text, List<Image> imageList) {
+    public static SpannableStringBuilder parseText(String text, int maxAllowedWidth, List<Image> imageList) {
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text);
 
         Pattern pattern = Pattern.compile("\\[img_(\\d+)\\]");
@@ -315,22 +296,61 @@ public class Helper {
                 if (image.getName().equals(nameImg)) {
                     File imgFile = new File(image.getUrl());
 
-                    try {
-                        Drawable imgDrawable = ImageDecoder.decodeDrawable(ImageDecoder.createSource(imgFile));
-                        imgDrawable.setBounds(0, 0, imgDrawable.getIntrinsicWidth(), imgDrawable.getIntrinsicHeight());
-                        if (imgDrawable == null) break;
+                    Drawable imgDrawable = createImgDrawable(imgFile, maxAllowedWidth);
+                    if (imgDrawable == null) break;
 
-                        ImageSpan imageSpan = new ImageSpan(imgDrawable);
-                        stringBuilder.setSpan(imageSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    ImageSpan imageSpan = new ImageSpan(imgDrawable);
+                    stringBuilder.setSpan(imageSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                        break;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    break;
+
                 }
             }
         }
         return stringBuilder;
+    }
+
+    private static Drawable createImgDrawable(File imgFile, int maxAllowedWidth) {
+        try {
+            Drawable imgDrawable = ImageDecoder.decodeDrawable(ImageDecoder.createSource(imgFile));
+            float ratio = getImgRatio(maxAllowedWidth, imgDrawable.getIntrinsicWidth());
+            int width = (int)(imgDrawable.getIntrinsicWidth() * ratio);
+            int height = (int)(imgDrawable.getIntrinsicHeight() * ratio);
+            imgDrawable.setBounds(0, 0, width, height);
+
+            return imgDrawable;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private static Drawable createImagDrawable(Activity activity, Uri uri, int maxAllowedWidth) {
+        try {
+            Drawable imageDrawable = ImageDecoder.decodeDrawable(ImageDecoder.createSource(activity.getContentResolver(), uri));
+            if (imageDrawable == null) return null;
+
+            float ratio = getImgRatio(maxAllowedWidth, imageDrawable.getIntrinsicWidth());
+            int imgWidth = (int)(imageDrawable.getIntrinsicWidth() * ratio);
+            int imgHeight = (int)(imageDrawable.getIntrinsicHeight() * ratio);
+            imageDrawable.setBounds(0, 0, imgWidth, imgHeight);
+
+            return imageDrawable;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private static Drawable createDeleteIcon(Activity activity) {
+        int iconDeleteSize = 50;
+        Drawable iconDeleteDrawable = ResourcesCompat.getDrawable(activity.getResources(), R.drawable.ic_action_delete_x, null);
+        iconDeleteDrawable.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+        iconDeleteDrawable.setBounds(0, 0, iconDeleteSize, iconDeleteSize);
+
+        return iconDeleteDrawable;
     }
 
     public static SpannableStringBuilder parseText(Context context, String text) {
