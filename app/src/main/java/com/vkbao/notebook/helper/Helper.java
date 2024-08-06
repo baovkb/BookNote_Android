@@ -157,7 +157,7 @@ public class Helper {
         editText.post(() -> {
             int cursorPosition = 0;
             if (editText.isFocused()) {
-                cursorPosition = editText.getSelectionEnd() != -1 ? editText.getSelectionEnd() : 0;
+                cursorPosition = editText.getSelectionStart() != -1 ? editText.getSelectionStart() : 0;
             } else {
                 cursorPosition = editText.getText().toString().length() != -1 ? editText.getText().toString().length() : 0;
             }
