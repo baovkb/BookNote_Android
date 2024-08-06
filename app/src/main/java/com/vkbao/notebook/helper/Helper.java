@@ -356,7 +356,7 @@ public class Helper {
     }
 
     private static Drawable createDeleteIcon(Activity activity) {
-        int iconDeleteSize = 56;
+        int iconDeleteSize = 64;
         Drawable iconDeleteDrawable = ResourcesCompat.getDrawable(activity.getResources(), R.drawable.ic_action_delete_x, null);
         iconDeleteDrawable.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
         iconDeleteDrawable.setBounds(0, 0, iconDeleteSize, iconDeleteSize);

@@ -223,7 +223,7 @@ public class AddNoteFragment extends Fragment
                                 //delete temporary image
                                 Helper.cleanDirectory(new File(Helper.getTmpImgPath(requireActivity())));
 
-                                fragmentManager.popBackStackImmediate();
+                                fragmentManager.popBackStack();
                             }
                         }, note);
                     }
