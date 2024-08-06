@@ -37,6 +37,8 @@ public class CustomImageSpan extends ImageSpan {
                      @NonNull Paint paint) {
         // Draw main image
         Drawable drawable = getDrawable();
+        int imgWidth = Math.abs(drawable.getBounds().right - drawable.getBounds().left);
+        int imgHeight = Math.abs(drawable.getBounds().top - drawable.getBounds().bottom);
         //save state
         canvas.save();
         //dịch y lên giá trị bằng đô cao hình ảnh chính => bottom của ảnh sẽ trùng với line
@@ -46,9 +48,9 @@ public class CustomImageSpan extends ImageSpan {
         canvas.restore();
 
         // Draw icon
-        int iconSize = iconDrawable.getIntrinsicWidth();
-        int iconX = (int) (x + drawable.getIntrinsicWidth() - iconSize);
-        int iconY = top;
+        int iconSize = Math.abs(iconDrawable.getBounds().right - iconDrawable.getBounds().left);
+        int iconX = (int) (x + imgWidth - iconSize);
+        int iconY = (int) (transY);
 
         iconDrawable.setBounds(iconX, iconY, iconX + iconSize, iconY + iconSize);
         iconDrawable.draw(canvas);

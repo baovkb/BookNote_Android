@@ -265,6 +265,7 @@ public class EditNoteFragment extends Fragment implements View.OnClickListener {
     public void launchGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         galleryIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        galleryIntent.setType("image/*");
         startActivityForResult(galleryIntent, REQUEST_GALLERY_CODE);
     }
 

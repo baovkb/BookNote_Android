@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.widget.EditText;
 
 import androidx.core.content.ContextCompat;
@@ -153,18 +154,18 @@ public class Helper {
     }
 
     public static void insertImgToEditTextView(Activity activity, List<Uri> uriList, EditText editText) {
-        if (editText != null) {
+        editText.post(() -> {
             int cursorPosition = 0;
             if (editText.isFocused()) {
-                cursorPosition = editText.getSelectionStart();
+                cursorPosition = editText.getSelectionEnd() != -1 ? editText.getSelectionEnd() : 0;
             } else {
-                cursorPosition = editText.getText().length();
+                cursorPosition = editText.getText().toString().length() != -1 ? editText.getText().toString().length() : 0;
             }
 
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(editText.getText());
             for (Uri uriImg: uriList) {
                 //main image
-                Drawable imageDrawable = createImagDrawable(activity, uriImg, editText.getWidth());
+                Drawable imageDrawable = createImagDrawable(activity, uriImg, editText.getWidth() - 50);
                 if (imageDrawable == null) continue;
 
                 String uniqueStr = Long.toString(TimeConvertor.getCurrentUnixMiliSecond()) + Helper.randomInt(1, 100);
@@ -188,12 +189,18 @@ public class Helper {
                     editText.setText(tmpStringBuilder);
                 });
 
-                spannableStringBuilder.insert(cursorPosition, getImgString);
-                cursorPosition += replacedStr.length();
+                try {
+                    Log.d("test", "string: " + spannableStringBuilder.toString());
+                    Log.d("test", "cursor: " + cursorPosition);
+                    spannableStringBuilder.insert(cursorPosition, getImgString);
+                    cursorPosition += replacedStr.length();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             editText.setText(spannableStringBuilder);
-        }
+        });
     }
 
     public static SpannableStringBuilder createImgString(Activity activity,
@@ -257,7 +264,11 @@ public class Helper {
                             editText.setText(tmpStringBuilder);
                         });
 
-                        stringBuilder.replace(start, end, imgText);
+                        try {
+                            stringBuilder.replace(start, end, imgText);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
                         break;
 
@@ -345,7 +356,7 @@ public class Helper {
     }
 
     private static Drawable createDeleteIcon(Activity activity) {
-        int iconDeleteSize = 50;
+        int iconDeleteSize = 56;
         Drawable iconDeleteDrawable = ResourcesCompat.getDrawable(activity.getResources(), R.drawable.ic_action_delete_x, null);
         iconDeleteDrawable.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
         iconDeleteDrawable.setBounds(0, 0, iconDeleteSize, iconDeleteSize);

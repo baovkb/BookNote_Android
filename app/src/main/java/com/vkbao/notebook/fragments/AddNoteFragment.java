@@ -264,6 +264,7 @@ public class AddNoteFragment extends Fragment
     public void launchGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         galleryIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        galleryIntent.setType("image/*");
         startActivityForResult(galleryIntent, REQUEST_GALLERY_CODE);
     }
 
@@ -273,11 +274,12 @@ public class AddNoteFragment extends Fragment
         if (requestCode == REQUEST_GALLERY_CODE && resultCode == RESULT_OK && data != null) {
             //chose multiple images
             List<Uri> uriList = new ArrayList<>();
-            if (data.getClipData() != null) {
+            if (data.getClipData()!= null) {
                 ClipData clipData = data.getClipData();
 
                 for (int i = 0; i < clipData.getItemCount(); ++i) {
-                    uriList.add(clipData.getItemAt(i).getUri());
+                    if (clipData.getItemAt(i) != null)
+                        uriList.add(clipData.getItemAt(i).getUri());
                 }
             } else {
                 uriList.add(data.getData());
